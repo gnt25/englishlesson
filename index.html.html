@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyEnglish AI — Англи хэлний AI дасгалжуулагч</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,"Segoe UI",Arial,sans-serif}
+:root{
+  --primary:#4f46e5;--primary2:#7c3aed;--bg:#f5f7fb;--card:#fff;--text:#172033;
+  --muted:#6b7280;--border:#e6e8ef;--green:#16a34a;--red:#dc2626;--yellow:#f59e0b;
+  --soft:#eef2ff;
+}
+body{background:var(--bg);color:var(--text)}
+button{font-family:inherit}
+:focus-visible{outline:3px solid #a5b4fc;outline-offset:2px}
+
+/* HEADER */
+header{height:68px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:30;gap:10px}
+.logo{font-size:21px;font-weight:800;color:var(--primary);white-space:nowrap}
+.logo span{color:#111827}
+.header-right{display:flex;align-items:center;gap:12px}
+.streak{background:#fff7ed;color:#c2410c;padding:8px 13px;border-radius:20px;font-weight:700;font-size:14px}
+.xp{background:#ecfdf5;color:#047857;padding:8px 13px;border-radius:20px;font-weight:700;font-size:14px}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.menu-btn{display:none;background:#f3f4f6;border:none;border-radius:10px;padding:9px 12px;font-size:18px;cursor:pointer}
+
+/* LAYOUT */
+.layout{display:flex;min-height:calc(100vh - 68px)}
+.sidebar{width:248px;background:#fff;border-right:1px solid var(--border);padding:20px 13px;flex-shrink:0}
+.nav-title{color:#9ca3af;font-size:12px;font-weight:700;letter-spacing:.04em;margin:14px 12px 8px}
+.nav-item{padding:11px 14px;border-radius:12px;margin-bottom:4px;cursor:pointer;color:#4b5563;display:flex;gap:11px;
+  align-items:center;font-weight:600;font-size:15px}
+.nav-item:hover,.nav-item.active{background:var(--soft);color:var(--primary)}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:11px;padding:2px 7px;border-radius:10px}
+.main{flex:1;padding:26px;max-width:1320px;margin:auto;width:100%}
+.section{display:none}
+.section.active{display:block}
+
+/* COMMON */
+.welcome{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:14px;flex-wrap:wrap}
+.welcome h1{font-size:27px;margin-bottom:6px}
+.welcome p{color:var(--muted)}
+.btn{border:none;padding:11px 18px;border-radius:11px;cursor:pointer;font-weight:700;font-size:14px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.btn-primary:hover{opacity:.92}
+.btn-light{background:#f3f4f6;color:#374151}
+.btn-light:hover{background:#e9ebef}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:#fee2e2;color:var(--red)}
+.btn-sm{padding:8px 13px;font-size:13px;border-radius:9px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:18px}
+.card h3{margin-bottom:14px}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chip{background:var(--soft);color:var(--primary);padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600}
+.chip.gray{background:#f3f4f6;color:#4b5563}
+.chip.green{background:#ecfdf5;color:#047857}
+.chip.red{background:#fef2f2;color:var(--red)}
+.chip.yellow{background:#fffbeb;color:#b45309}
+input,select,textarea{font-family:inherit;font-size:15px;padding:12px;border:1px solid var(--border);
+  border-radius:11px;outline:none;background:#fff;color:var(--text);width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.field{margin-bottom:14px}
+
+/* DASHBOARD */
+.daily{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:22px;padding:26px;margin-bottom:20px;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.daily h2{font-size:23px;margin-bottom:8px}
+.daily p{opacity:.92}
+.daily .btn{background:#fff;color:var(--primary)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.stat-number{font-size:27px;font-weight:800;margin:6px 0}
+.stat-label{color:var(--muted);font-size:14px}
+.progress{height:8px;background:#e5e7eb;border-radius:10px;overflow:hidden;margin-top:10px}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:10px;transition:width .4s}
+.grid2{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+.skill{margin-bottom:15px}
+.skill-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+
+/* PATH */
+.path-item{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid var(--border);
+  border-radius:15px;margin-bottom:12px;background:#fff}
+.path-item.done{background:#f8fafc;opacity:.75}
+.path-num{width:34px;height:34px;border-radius:50%;background:var(--soft);color:var(--primary);
+  display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+.path-item.done .path-num{background:#ecfdf5;color:var(--green)}
+.path-body{flex:1;min-width:0}
+.path-body strong{display:block;font-size:16px;margin-bottom:3px}
+
+/* LESSON */
+.lesson-content{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.vocab{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+.word{border:1px solid var(--border);border-radius:14px;padding:15px;cursor:pointer;transition:.15s}
+.word:hover{border-color:var(--primary);transform:translateY(-2px)}
+.word strong{display:block;font-size:17px}
+.word span{color:var(--muted);font-size:14px}
+.dialogue{line-height:1.9;background:#f8fafc;padding:18px;border-radius:14px}
+.ai-message{background:var(--soft);border-left:4px solid var(--primary);padding:14px;border-radius:10px;margin-top:14px;line-height:1.6}
+
+/* QUIZ */
+.quiz-card{max-width:780px;margin:auto}
+.question{font-size:21px;font-weight:700;margin:16px 0}
+.options{display:grid;gap:11px}
+.option{border:2px solid var(--border);padding:14px;border-radius:12px;cursor:pointer;background:#fff;font-size:15px}
+.option:hover{border-color:var(--primary)}
+.option.correct{border-color:var(--green);background:#f0fdf4}
+.option.wrong{border-color:var(--red);background:#fef2f2}
+.qmeta{display:flex;justify-content:space-between;color:var(--muted);font-size:14px}
+
+/* FLASHCARD / SRS */
+.srs-card{max-width:620px;margin:auto;text-align:center;padding:34px 22px}
+.srs-en{font-size:38px;font-weight:800;margin-bottom:8px}
+.srs-mn{font-size:22px;color:var(--primary);font-weight:700}
+.srs-ex{color:var(--muted);margin-top:14px;font-style:italic;line-height:1.6}
+.srs-grade{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:22px}
+.g0{background:#fef2f2;color:var(--red)}.g3{background:#fffbeb;color:#b45309}
+.g4{background:#eff6ff;color:#1d4ed8}.g5{background:#ecfdf5;color:#047857}
+.srs-grade .btn{font-size:13px;padding:12px 6px}
+.srs-grade .btn small{display:block;font-weight:600;opacity:.75;margin-top:3px}
+.word-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.wl{border:1px solid var(--border);border-radius:13px;padding:13px;background:#fff}
+.wl b{font-size:16px}
+.wl .due{font-size:12px;color:var(--muted);margin-top:6px;display:block}
+
+/* CHAT */
+.speaking{max-width:850px;margin:auto}
+.chat{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;height:430px;overflow-y:auto}
+.message{max-width:78%;padding:13px 16px;border-radius:17px;margin-bottom:12px;line-height:1.55;white-space:pre-wrap}
+.ai{background:var(--soft)}
+.user{background:var(--primary);color:#fff;margin-left:auto}
+.correction{background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:13px;padding:9px 12px;
+  border-radius:11px;margin:-6px 0 12px;max-width:78%}
+.chat-input{display:flex;gap:9px;margin-top:13px}
+.mic{width:52px;height:52px;border-radius:50%;border:none;background:var(--soft);color:var(--primary);
+  font-size:21px;cursor:pointer;flex-shrink:0}
+.mic.rec{background:var(--red);color:#fff;animation:pulse 1.1s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}70%{box-shadow:0 0 0 14px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* PRONUNCIATION */
+.pron-target{font-size:26px;font-weight:700;line-height:1.6;text-align:center;margin:18px 0}
+.pw{padding:2px 5px;border-radius:7px;display:inline-block;margin:2px}
+.pw.ok{background:#dcfce7;color:#166534}
+.pw.mid{background:#fef3c7;color:#92400e}
+.pw.bad{background:#fee2e2;color:#991b1b}
+.score-ring{width:132px;height:132px;border-radius:50%;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;margin:auto;font-weight:800;font-size:34px;color:#fff}
+.score-ring small{font-size:13px;font-weight:600;opacity:.9}
+
+/* MISTAKES */
+.mistake{display:flex;justify-content:space-between;gap:12px;padding:15px 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.mistake:last-child{border-bottom:none}
+.bad{color:var(--red)}.good{color:var(--green)}
+
+/* LEVEL */
+.level-box{text-align:center;padding:32px}
+.level{font-size:58px;font-weight:900;color:var(--primary);line-height:1}
+.cefr{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:22px auto;max-width:620px}
+.cefr div{padding:11px 4px;border-radius:11px;background:#f3f4f6;color:#6b7280;font-weight:700;font-size:14px}
+.cefr div.on{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.cal{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.cal i{width:26px;height:26px;border-radius:8px;background:#e5e7eb;display:block}
+.cal i.on{background:var(--green)}
+
+.steps{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.sdot{width:30px;height:30px;border-radius:50%;background:#f3f4f6;color:#9ca3af;display:flex;align-items:center;
+  justify-content:center;font-weight:700;font-size:13px;cursor:default}
+.sdot.past{background:#dcfce7;color:#166534;cursor:pointer}
+.sdot.now{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
+.tab.lock{opacity:.55}
+.keyrow,.keyadd{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+/* MISC */
+.loader{display:inline-block;width:16px;height:16px;border:3px solid #c7d2fe;border-top-color:var(--primary);
+  border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px;margin-right:7px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;
+  padding:13px 20px;border-radius:12px;z-index:100;font-weight:600;max-width:90vw;text-align:center}
+.empty{text-align:center;color:var(--muted);padding:34px 14px;line-height:1.7}
+.banner{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:13px 16px;border-radius:13px;
+  margin-bottom:18px;font-size:14px;line-height:1.6}
+.keyrow{display:flex;gap:10px;align-items:center;padding:12px;border:1px solid var(--border);border-radius:13px;margin-bottom:9px;flex-wrap:wrap}
+.keyrow.off{opacity:.55}
+.keyrow b{font-size:15px}
+.keymask{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--muted)}
+.keyadd{display:grid;grid-template-columns:1fr 1.4fr auto;gap:9px;margin-top:12px}
+@media(max-width:600px){.keyadd{grid-template-columns:1fr}}
+.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:9px 15px;border-radius:11px;background:#fff;border:1px solid var(--border);cursor:pointer;font-weight:600;font-size:14px}
+.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+@media(max-width:1000px){
+  .sidebar{position:fixed;top:68px;left:-260px;height:calc(100vh - 68px);z-index:25;transition:left .25s;overflow-y:auto}
+  .sidebar.open{left:0;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+  .menu-btn{display:block}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .grid2,.lesson-content{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  header{padding:0 13px}.main{padding:14px}.stats{gap:10px}
+  .welcome h1{font-size:23px}.vocab{grid-template-columns:1fr}
+  .srs-grade{grid-template-columns:repeat(2,1fr)}
+  .srs-en{font-size:30px}.xp{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="row" style="gap:10px">
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div class="logo">EasyEnglish <span>AI</span></div>
+  </div>
+  <div class="header-right">
+    <div class="xp" id="hXp">⭐ 0 XP</div>
+    <div class="streak" id="hStreak">🔥 0 хоног</div>
+    <div class="avatar" id="hAvatar">С</div>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="nav-title">СУРАЛЦАХ</div>
+  <div class="nav-item active" data-s="dashboard" onclick="go('dashboard',this)">🏠 <span>Хяналтын самбар</span></div>
+  <div class="nav-item" data-s="placement" onclick="go('placement',this)">🎯 <span>Түвшин тогтоох тест</span></div>
+  <div class="nav-item" data-s="curriculum" onclick="go('curriculum',this)">🧭 <span>Сургалтын зам A1→C1</span></div>
+  <div class="nav-item" data-s="lesson" onclick="go('lesson',this)">📚 <span>Өнөөдрийн хичээл</span></div>
+  <div class="nav-item" data-s="words" onclick="go('words',this)">🧠 <span>Үгийн сан</span><span class="nav-badge" id="dueBadge" style="display:none">0</span></div>
+  <div class="nav-item" data-s="quiz" onclick="go('quiz',this)">📝 <span>Дасгал</span></div>
+  <div class="nav-title">ЯРИА</div>
+  <div class="nav-item" data-s="speaking" onclick="go('speaking',this)">🗣️ <span>AI-тай ярих</span></div>
+  <div class="nav-item" data-s="pron" onclick="go('pron',this)">🎙️ <span>Дуудлагын үнэлгээ</span></div>
+  <div class="nav-title">АХИЦ</div>
+  <div class="nav-item" data-s="mistakes" onclick="go('mistakes',this)">⚠️ <span>Алдааны дэвтэр</span></div>
+  <div class="nav-item" data-s="progress" onclick="go('progress',this)">📊 <span>Миний ахиц</span></div>
+  <div class="nav-item" data-s="settings" onclick="go('settings',this)">⚙️ <span>Тохиргоо</span></div>
+</aside>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="section active">
+  <div id="keyBanner"></div>
+  <div class="welcome">
+    <div>
+      <h1 id="hello">Сайн байна уу! 👋</h1>
+      <p id="helloSub">Өнөөдөр 10 минут англи хэлээ сайжруулъя.</p>
+    </div>
+    <button class="btn btn-primary" onclick="startToday()">✨ Хичээлээ эхлүүлэх</button>
+  </div>
+
+  <div class="daily">
+    <div>
+      <h2 id="dTopic">Түвшингээ тогтоогоод эхэлье</h2>
+      <p id="dSub">AI таны түвшинг тогтоож, хувийн сургалтын зам зурна.</p>
+    </div>
+    <button class="btn" id="dBtn" onclick="startToday()">Эхлэх →</button>
+  </div>
+
+  <div class="stats">
+    <div class="card" style="margin:0">
+      <div class="stat-label">Одоогийн түвшин</div>
+      <div class="stat-number" id="sLevel">—</div>
+      <div class="progress"><div class="progress-bar" id="sLevelBar" style="width:0%"></div></div>
+    </div>
+    <div class="card" style="margin:0">
+      <div class="stat-label">Цээжилсэн үг</div>
+      <div class="stat-number" id="sWords">0</div>
+      <div class="stat-label" id="sWordsSub">Нийт 0 үг</div>
+    </div>
+    <div class="card" style="margin:0">
+      <div class="stat-label">Дуудлагын оноо</div>
+      <div class="stat-number" id="sPron">—</div>
+      <div class="stat-label">Сүүлийн 5 удаагийн дундаж</div>
+    </div>
+    <div class="card" style="margin:0">
+      <div class="stat-label">XP оноо</div>
+      <div class="stat-number" id="sXp">0</div>
+      <div class="stat-label">⭐ Өдөр бүр цуглуулаарай</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>📈 Миний чадварууд</h3>
+      <div id="skillBars"></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>🔥 Тасралтгүй суралцалт</h3>
+        <div style="font-size:42px;margin:8px 0" id="streakBig">🔥 0</div>
+        <p class="muted" id="streakTxt">Өнөөдөр хичээлээ эхлүүлээрэй.</p>
+        <div class="cal" id="cal"></div>
+      </div>
+      <div class="card">
+        <h3>⏰ Давтах цаг болсон үгс</h3>
+        <div id="dueBox"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLACEMENT -->
+<section id="placement" class="section">
+  <div class="welcome">
+    <div>
+      <h1>🎯 AI түвшин тогтоох тест</h1>
+      <p>A1–C1 түвшний асуултууд. AI таны хариултыг шинжилж түвшин, сул талыг тогтооно.</p>
+    </div>
+    <button class="btn btn-light" id="ptRestart" style="display:none" onclick="startPlacement()">↻ Дахин өгөх</button>
+  </div>
+  <div id="ptBox"></div>
+</section>
+
+<!-- CURRICULUM -->
+<section id="curriculum" class="section">
+  <div class="welcome">
+    <div>
+      <h1>🧭 Миний сургалтын зам</h1>
+      <p>A1→C1 хүртэл 13 шат, 71 хичээл. AI таны алдаанд тулгуурлан дараагийн хичээлийг сонгож, шаардлагатай бол нэмэлт засвар хичээл оруулна.</p>
+    </div>
+    <button class="btn btn-light" onclick="buildPath(true)">✨ AI зөвлөмж шинэчлэх</button>
+  </div>
+  <div id="pathBox"></div>
+  <div class="tabs" id="currTabs"></div>
+  <div id="currBox"></div>
+</section>
+
+<!-- LESSON -->
+<section id="lesson" class="section">
+  <div class="welcome">
+    <div>
+      <h1>📚 Өнөөдрийн хичээл</h1>
+      <p id="lessonSub">Сургалтын замаасаа сэдэв сонгоно уу.</p>
+    </div>
+    <button class="btn btn-light" onclick="go('curriculum')">🧭 Сэдэв солих</button>
+  </div>
+  <div id="lessonBox"></div>
+</section>
+
+<!-- WORDS / SRS -->
+<section id="words" class="section">
+  <div class="welcome">
+    <div>
+      <h1>🧠 Үгийн сан <span class="muted" style="font-size:16px">(интервалт давталт)</span></h1>
+      <p>Мартах гэж байгаа үгийг систем өөрөө тухайн өдөрт нь эргүүлж гаргана.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="startReview()">⏰ Давтлага эхлүүлэх</button>
+      <button class="btn btn-light" onclick="aiAddWords()">✨ AI-аар үг нэмэх</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="wordTab('review',this)">Давталт</div>
+    <div class="tab" onclick="wordTab('all',this)">Бүх үг</div>
+  </div>
+  <div id="reviewBox"></div>
+  <div id="allWordsBox" style="display:none"></div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="section">
+  <div class="welcome">
+    <div>
+      <h1>📝 Дасгал</h1>
+      <p>AI таны сул талд тохируулж асуулт үүсгэнэ.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="genQuiz('weak')">✨ Сул талаар</button>
+      <button class="btn btn-light" onclick="genQuiz('mistakes')">⚠️ Алдаанаасаа</button>
+      <button class="btn btn-light" onclick="genQuiz('words')">🧠 Үгийн сангаас</button>
+    </div>
+  </div>
+  <div id="quizBox"><div class="card quiz-card empty">Дээрх сонголтоос дарж дасгал үүсгээрэй.</div></div>
+</section>
+
+<!-- SPEAKING -->
+<section id="speaking" class="section">
+  <div class="speaking">
+    <div class="welcome">
+      <div>
+        <h1>🗣️ AI-тай ярих</h1>
+        <p>Микрофоноор эсвэл бичиж ярилцана. AI алдааг тань зөөлөн залруулна.</p>
+      </div>
+      <div class="row">
+        <select id="chatTopic" style="width:auto">
+          <option value="free">Чөлөөт яриа</option>
+          <option value="introduce">Өөрийгөө танилцуулах</option>
+          <option value="daily">Өдрийн хуваарь</option>
+          <option value="school">Сургууль, хичээл</option>
+          <option value="family">Гэр бүл</option>
+          <option value="shopping">Дэлгүүр, худалдан авалт</option>
+          <option value="travel">Аялал</option>
+          <option value="interview">Ярилцлага (ажил)</option>
+        </select>
+        <button class="btn btn-primary" onclick="newChat()">🔄 Шинэ яриа</button>
+      </div>
+    </div>
+    <div class="chat" id="chat"></div>
+    <div class="chat-input">
+      <button class="mic" id="chatMic" title="Микрофон" onclick="micChat()">🎤</button>
+      <input id="chatInput" placeholder="Англиар бичих эсвэл 🎤 дар..." onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="btn btn-primary" onclick="sendMessage()">Илгээх</button>
+    </div>
+    <p class="muted" style="font-size:13px;margin-top:9px">Хэрэв микрофон ажиллахгүй бол Chrome ашиглаад хуудсанд микрофоны зөвшөөрөл өгнө үү.</p>
+  </div>
+</section>
+
+<!-- PRONUNCIATION -->
+<section id="pron" class="section">
+  <div class="welcome">
+    <div>
+      <h1>🎙️ Дуудлагын үнэлгээ</h1>
+      <p>Өгүүлбэрийг чангаар унш. Систем үг тус бүрийг харьцуулж оноо тавина.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-light" onclick="nextPronTarget()">⇄ Өөр өгүүлбэр</button>
+      <button class="btn btn-primary" onclick="aiPronSentences()">✨ AI-аар шинэ өгүүлбэр</button>
+    </div>
+  </div>
+  <div class="card" style="max-width:820px;margin:auto">
+    <div class="qmeta"><span id="pronLevel">A1</span><span id="pronIdx"></span></div>
+    <div class="pron-target" id="pronTarget">I wake up at seven o'clock.</div>
+    <div class="row" style="justify-content:center">
+      <button class="btn btn-light" onclick="speak(document.getElementById('pronTarget').innerText)">🔊 Сонсох</button>
+      <button class="mic" id="pronMic" onclick="micPron()">🎤</button>
+      <span class="muted" id="pronHint">Микрофон дарж уншаарай</span>
+    </div>
+    <div id="pronResult"></div>
+  </div>
+  <div class="card" style="max-width:820px;margin:18px auto 0">
+    <h3>📜 Түүх</h3>
+    <div id="pronHistory"></div>
+  </div>
+</section>
+
+<!-- MISTAKES -->
+<section id="mistakes" class="section">
+  <div class="welcome">
+    <div>
+      <h1>⚠️ Алдааны дэвтэр</h1>
+      <p>AI таны давтагддаг алдааг цуглуулж, дараагийн хичээлд тусгана.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="genQuiz('mistakes')">📝 Алдаанаас дасгал</button>
+      <button class="btn btn-light" onclick="clearMistakes()">🗑 Цэвэрлэх</button>
+    </div>
+  </div>
+  <div class="card"><div id="mistakeBox"></div></div>
+</section>
+
+<!-- PROGRESS -->
+<section id="progress" class="section">
+  <div class="welcome"><div><h1>📊 Миний ахиц</h1><p>Түвшин, чадвар, давталтын статистик.</p></div></div>
+  <div class="card level-box">
+    <div class="level" id="pLevel">—</div>
+    <h2 id="pLevelName">Түвшин тогтоогоогүй</h2>
+    <div class="cefr" id="cefrBar"></div>
+    <p class="muted" id="pLevelTxt">Түвшин тогтоох тестээ өгөөрэй.</p>
+    <div class="progress" style="max-width:600px;margin:14px auto"><div class="progress-bar" id="pBar" style="width:0%"></div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>📈 Чадварын задаргаа</h3><div id="pSkills"></div></div>
+    <div class="card"><h3>🧠 Үгийн сангийн байдал</h3><div id="pWords"></div></div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings" class="section">
+  <div class="welcome"><div><h1>⚙️ Тохиргоо</h1><p>Gemini API түлхүүр болон хувийн мэдээлэл.</p></div></div>
+  <div class="card" style="max-width:720px">
+    <h3>🔑 Gemini API түлхүүрүүд</h3>
+    <div id="keyList"></div>
+    <div class="keyadd">
+      <input id="newKeyName" placeholder="Нэр (жишээ: Ажлын түлхүүр)">
+      <input id="newKey" type="password" placeholder="AIza...">
+      <button class="btn btn-primary" onclick="addKey()">+ Нэмэх</button>
+    </div>
+    <p class="muted" style="font-size:13px;margin-top:8px">aistudio.google.com/apikey хаягаас үнэгүй авна. Олон түлхүүр нэмбэл нэгнийх нь хязгаар (429) дуусахад систем автоматаар дараагийн түлхүүр рүү шилжинэ. Түлхүүрүүд зөвхөн энэ төхөөрөмжийн localStorage-д хадгалагдана.</p>
+    <label class="row" style="margin-top:12px;font-weight:600">
+      <input type="checkbox" id="setRotate" style="width:auto;margin-right:8px"> Дуудлага бүрт түлхүүрүүдийг ээлжлэн ашиглах (ачааллыг хуваана)
+    </label>
+    <div class="field">
+      <label for="setModel">Загвар</label>
+      <select id="setModel">
+        <option value="gemini-3.5-flash">gemini-3.5-flash (хурдан, санал болгох)</option>
+        <option value="gemini-3.5-pro">gemini-3.5-pro (илүү нарийн)</option>
+        <option value="gemini-2.5-flash">gemini-2.5-flash (нөөц)</option>
+      </select>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" onclick="saveSettings()">💾 Хадгалах</button>
+      <button class="btn btn-light" onclick="testAllKeys()">🔌 Бүгдийг шалгах</button>
+      <span id="keyStatus" class="muted"></span>
+    </div>
+  </div>
+  <div class="card" style="max-width:780px">
+    <h3>📦 Хичээлийн контент пакет</h3>
+    <p class="muted" style="font-size:13px;margin-bottom:12px">Үүсгэсэн хичээл энд хадгалагдаж, дараа нь API дуудахгүйгээр нээгдэнэ. Багш нь бүх хичээлээ урьдчилан бэлдээд пакет файлаа сурагчдадаа тараавал <b>сурагчид API түлхүүргүйгээр</b> хичээллэнэ (зөвхөн ярианы блокт түлхүүр хэрэгтэй).</p>
+    <div id="packBox"></div>
+    <input type="file" id="packFile" accept="application/json" style="display:none" onchange="importPack(event)">
+  </div>
+  <div class="card" style="max-width:720px">
+    <h3>👤 Хувийн мэдээлэл</h3>
+    <div class="field"><label for="setName">Нэр</label><input id="setName" placeholder="Бат"></div>
+    <div class="field"><label for="setGoal">Өдрийн зорилт (минут)</label>
+      <select id="setGoal"><option>5</option><option>10</option><option>15</option><option>20</option><option>30</option></select>
+    </div>
+    <div class="field"><label for="setVoice">Ярианы хурд</label>
+      <select id="setVoice"><option value="0.7">Удаан</option><option value="0.85">Дунд</option><option value="1">Хэвийн</option></select>
+    </div>
+    <div class="field"><label for="setVoiceName">Англи хоолой</label>
+      <select id="setVoiceName"></select>
+      <div class="row" style="margin-top:8px"><button class="btn btn-light btn-sm" onclick="testVoice()">🔊 Сонсох</button>
+      <span class="muted" id="micInfo" style="font-size:13px"></span></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveSettings()">💾 Хадгалах</button>
+  </div>
+  <div class="card" style="max-width:780px">
+    <h3>☁️ Ахиц хадгалалт / синк</h3>
+    <p class="muted" style="font-size:13px;margin-bottom:12px">GitHub Pages дээр байршуулсан үед ахиц зөвхөн хөтөчид хадгалагддаг. Доороос сонгож, олон төхөөрөмж хооронд эсвэл багшийн нэгдсэн хуудсанд хадгалж болно.</p>
+    <div id="syncBox"></div>
+  </div>
+  <div class="card" style="max-width:720px">
+    <h3>💾 Өгөгдөл</h3>
+    <div class="row">
+      <button class="btn btn-light" onclick="exportData()">⬇️ Экспорт (JSON)</button>
+      <button class="btn btn-light" onclick="document.getElementById('impFile').click()">⬆️ Импорт</button>
+      <button class="btn btn-red" onclick="resetAll()">🗑 Бүгдийг устгах</button>
+    </div>
+    <input type="file" id="impFile" accept="application/json" style="display:none" onchange="importData(event)">
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+/* ============ STATE ============ */
+const LS = 'easyenglish_ai_v1';
+const DAY = 86400000;
+const LEVELS = ['A1','A2','B1','B2','C1'];
+const LEVEL_NAME = {A1:'Анхан шат',A2:'Бага дунд',B1:'Дунд',B2:'Ахисан дунд',C1:'Ахисан'};
+const SKILLS = {vocabulary:'Үгийн сан',grammar:'Дүрэм',reading:'Унших',listening:'Сонсох',speaking:'Ярих',pronunciation:'Дуудлага'};
+
+function defaults(){
+  return {
+    v:1,
+    user:{name:'',level:null,levelPct:0,xp:0,streak:0,lastDay:null,goal:'10',rate:'0.85',days:[]},
+    skills:{vocabulary:0,grammar:0,reading:0,listening:0,speaking:0,pronunciation:0},
+    placement:{done:false,level:null,weak:[],summary:'',date:null},
+    path:[],
+    lesson:null,
+    words:[],
+    mistakes:[],
+    chat:[],
+    pron:[],
+    pronBank:[],
+    completed:{},
+    levelTests:{},
+    rec:null,
+    bank:{},
+    stats:{lessons:0,qRight:0,qTotal:0,reviews:0},
+    api:{keys:[],idx:0,rotate:true,model:'gemini-3.5-flash'},
+    sync:{mode:'off',token:'',gistId:'',url:'',code:'',auto:true,last:null,packLoaded:''}
+  };
+}
+function migrate(d){
+  const base = defaults();
+  const s = Object.assign({},base,d||{});
+  for(const k of Object.keys(base)){
+    if(base[k] && typeof base[k]==='object' && !Array.isArray(base[k])){
+      s[k] = Object.assign({},base[k],s[k]||{});
+    }
+    if(Array.isArray(base[k]) && !Array.isArray(s[k])) s[k]=base[k];
+  }
+  s.path=(s.path||[]).filter(p=>p && typeof p.id==='string' && p.id.charAt(0)==='x');
+  if(typeof s.user.stage!=='number') s.user.stage=0;
+  if(typeof s.user.unlocked!=='number') s.user.unlocked=0;
+  s.user.unlocked=Math.max(s.user.unlocked,s.user.stage);
+  if(s.completed) Object.keys(s.completed).forEach(k=>{ if(typeof s.completed[k]==='string') s.completed[k]={date:s.completed[k],score:0}; });
+  if(!Array.isArray(s.api.keys)) s.api.keys=[];
+  if(s.api.key && typeof s.api.key==='string' && s.api.key.length>20 && !s.api.keys.some(k=>k.key===s.api.key)){
+    s.api.keys.unshift({id:'k'+Date.now(),name:'Түлхүүр 1',key:s.api.key,on:true,status:'',used:0,day:''});
+  }
+  delete s.api.key;
+  const OLD=['gemini-2.5-flash','gemini-2.5-pro','gemini-2.0-flash','gemini-1.5-flash'];
+  if(!s.api.model || OLD.includes(s.api.model)) s.api.model='gemini-3.5-flash';
+  s.v = base.v;
+  return s;
+}
+let S = migrate(JSON.parse(localStorage.getItem(LS)||'null'));
+function save(){ try{ localStorage.setItem(LS,JSON.stringify(S)); }catch(e){ toast('Хадгалах зай дүүрсэн байна'); } }
+
+/* ============ UTILS ============ */
+const $ = id => document.getElementById(id);
+const esc = t => String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today = () => new Date().toISOString().slice(0,10);
+function toast(msg){
+  const d=document.createElement('div'); d.className='toast'; d.textContent=msg;
+  document.body.appendChild(d); setTimeout(()=>d.remove(),2600);
+}
+function addXp(n){ S.user.xp += n; markDay(); save(); renderHeader(); }
+function markDay(){
+  const t = today();
+  if(S.user.lastDay === t) return;
+  const y = new Date(Date.now()-DAY).toISOString().slice(0,10);
+  S.user.streak = (S.user.lastDay === y) ? S.user.streak+1 : 1;
+  S.user.lastDay = t;
+  S.user.days = (S.user.days||[]).concat(t).slice(-60);
+}
+function bump(skill,n){
+  if(!(skill in S.skills)) return;
+  S.skills[skill] = Math.max(0,Math.min(100, S.skills[skill] + n));
+  save();
+}
+
+/* ============ GEMINI (multi-key) ============ */
+function keyList(){ return (S.api.keys||[]).filter(k=>k.key && k.on!==false); }
+function hasKey(){ return keyList().length>0; }
+function noteUse(k){ const t=today(); if(k.day!==t){ k.day=t; k.used=0; } k.used=(k.used||0)+1; }
+function parseJson(text){
+  const clean=text.replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
+  try{ return JSON.parse(clean); }
+  catch(e){
+    const m=clean.match(/[[{][\s\S]*[\]}]/);
+    if(m) return JSON.parse(m[0]);
+    throw new Error('JSON задлах боломжгүй');
+  }
+}
+async function rawGemini(key,prompt,o){
+  const url='https://generativelanguage.googleapis.com/v1beta/models/'+S.api.model+':generateContent?key='+encodeURIComponent(key);
+  const inParts=[{text:prompt}].concat(o.parts||[]);
+  const body={contents:[{role:'user',parts:inParts}],generationConfig:{temperature:o.temp}};
+  if(o.system) body.systemInstruction={parts:[{text:o.system}]};
+  if(o.json) body.generationConfig.responseMimeType='application/json';
+  let r;
+  try{ r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }
+  catch(e){ const err=new Error('Сүлжээний алдаа'); err.status=0; throw err; }
+  if(!r.ok){
+    const t=await r.text();
+    const err=new Error('API '+r.status+': '+t.replace(/\s+/g,' ').slice(0,150));
+    err.status=r.status; throw err;
+  }
+  const data=await r.json();
+  const parts=(((data.candidates||[])[0]||{}).content||{}).parts||[];
+  const text=parts.map(p=>p.text||'').join('').trim();
+  if(!text) throw new Error('Хоосон хариу ирлээ');
+  return text;
+}
+function retriable(e){
+  const st=e.status;
+  if(st===undefined) return false;
+  if(st===0) return true;
+  if([429,403,500,502,503,504].includes(st)) return true;
+  if(st===400 && /api.?key|invalid/i.test(e.message)) return true;
+  return false;
+}
+async function ai(prompt,{json=true,system=null,temp=0.7,parts=null}={}){
+  const keys=keyList();
+  if(!keys.length) throw new Error('NO_KEY');
+  const start = (S.api.rotate!==false) ? ((S.api.idx||0)%keys.length) : 0;
+  let text=null,lastErr=null;
+  for(let n=0;n<keys.length;n++){
+    const k=keys[(start+n)%keys.length];
+    try{
+      text=await rawGemini(k.key,prompt,{json:json,system:system,temp:temp,parts:parts});
+      k.status='ok'; k.err=''; noteUse(k);
+      S.api.idx=(start+n+1)%keys.length; save();
+      break;
+    }catch(e){
+      lastErr=e;
+      k.status = e.status===429 ? 'quota' : (e.status===0 ? 'net' : 'err');
+      k.err=String(e.message).slice(0,90); save();
+      if(!retriable(e)) break;
+      if(n<keys.length-1) toast('"'+(k.name||'Түлхүүр')+'" ажиллахгүй → дараагийг туршиж байна');
+    }
+  }
+  if(text==null) throw lastErr||new Error('Тодорхойгүй алдаа');
+  if(document.getElementById('keyList') && $('settings').classList.contains('active')) renderKeys();
+  return json ? parseJson(text) : text;
+}
+function aiErr(e){
+  if(e && e.message==='NO_KEY'){ toast('Эхлээд Тохиргоо хэсэгт Gemini API түлхүүрээ нэмнэ үү'); go('settings'); }
+  else toast('AI алдаа: '+(e && e.message ? e.message : e));
+}
+function busy(el,txt){ el.innerHTML='<div class="card empty"><span class="loader"></span>'+esc(txt)+'</div>'; }
+
+/* ============ SPEECH ============ */
+let VOICES=[];
+function loadVoices(){
+  if(!('speechSynthesis' in window)) return;
+  VOICES=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+}
+function pickVoice(){
+  if(!VOICES.length) loadVoices();
+  const want=S.user.voiceName;
+  return VOICES.find(v=>v.name===want) || VOICES.find(v=>v.lang==='en-US') || VOICES[0] || null;
+}
+function speak(text,rate){
+  if(!('speechSynthesis' in window)) return;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=parseFloat(rate||S.user.rate||0.85);
+  const v=pickVoice(); if(v){ u.voice=v; u.lang=v.lang; }
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged=loadVoices; }
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function micMode(){ return SR ? 'sr' : (navigator.mediaDevices && window.MediaRecorder ? 'rec' : 'none'); }
+function wavBase64(buf,rate){
+  const n=buf.length, bytes=44+n*2, ab=new ArrayBuffer(bytes), dv=new DataView(ab);
+  const wr=(o,str)=>{ for(let i=0;i<str.length;i++) dv.setUint8(o+i,str.charCodeAt(i)); };
+  wr(0,'RIFF'); dv.setUint32(4,36+n*2,true); wr(8,'WAVE'); wr(12,'fmt ');
+  dv.setUint32(16,16,true); dv.setUint16(20,1,true); dv.setUint16(22,1,true);
+  dv.setUint32(24,rate,true); dv.setUint32(28,rate*2,true); dv.setUint16(32,2,true);
+  dv.setUint16(34,16,true); wr(36,'data'); dv.setUint32(40,n*2,true);
+  let o=44;
+  for(let i=0;i<n;i++){ let v=Math.max(-1,Math.min(1,buf[i])); dv.setInt16(o,v<0?v*0x8000:v*0x7FFF,true); o+=2; }
+  let bin=''; const u8=new Uint8Array(ab);
+  for(let i=0;i<u8.length;i+=0x8000) bin+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));
+  return btoa(bin);
+}
+async function blobToWav(blob){
+  const ab=await blob.arrayBuffer();
+  const AC=window.AudioContext||window.webkitAudioContext;
+  const ctx=new AC();
+  const decoded=await ctx.decodeAudioData(ab);
+  let data=decoded.getChannelData(0), rate=decoded.sampleRate;
+  try{
+    const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+    const off=new OC(1,Math.ceil(decoded.duration*16000),16000);
+    const src=off.createBufferSource(); src.buffer=decoded; src.connect(off.destination); src.start();
+    const out=await off.startRendering();
+    data=out.getChannelData(0); rate=16000;
+  }catch(e){}
+  ctx.close&&ctx.close();
+  return {b64:wavBase64(data,rate),secs:decoded.duration};
+}
+async function transcribeAudio(blob){
+  const w=await blobToWav(blob);
+  const r=await ai('Transcribe the English speech in this audio exactly, word for word, with no commentary. '+
+    'If a word is unclear, write the closest English word you hear. Return JSON {"text":"transcript"}.',
+    {temp:0,parts:[{inlineData:{mimeType:'audio/wav',data:w.b64}}]});
+  return {text:String(r.text||'').trim(),secs:w.secs};
+}
+function recordListen(onDone,onErr){
+  if(!hasKey()){ toast('Энэ хөтөч дээр микрофон таних нь AI-аар ажиллана — API түлхүүр нэмнэ үү'); onErr&&onErr(); return {stop(){}}; }
+  const h={mr:null,killed:false};
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    if(h.killed){ stream.getTracks().forEach(t=>t.stop()); onErr&&onErr(); return; }
+    let mime='';
+    ['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg'].some(m=>{
+      if(window.MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m)){ mime=m; return true; } return false; });
+    const mr=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
+    const chunks=[]; const t0=Date.now();
+    mr.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+    mr.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      const ms=Date.now()-t0;
+      if(!chunks.length){ onErr&&onErr(); return; }
+      toast('Бичлэгийг таниж байна...');
+      try{
+        const r=await transcribeAudio(new Blob(chunks,{type:mr.mimeType||'audio/mp4'}));
+        if(!r.text){ toast('Юу ч сонсогдсонгүй'); onErr&&onErr(); return; }
+        onDone({text:r.text,conf:0.9,ms:Math.round((r.secs||ms/1000)*1000),viaAudio:true});
+      }catch(e){ toast('Таних амжилтгүй: '+(e.message||e)); onErr&&onErr(); }
+    };
+    mr.start(); h.mr=mr;
+    setTimeout(()=>{ if(mr.state!=='inactive') mr.stop(); },25000);
+  }).catch(e=>{ toast('Микрофон нээгдсэнгүй: '+(e.message||e)); onErr&&onErr(); });
+  return {stop(){ h.killed=true; if(h.mr&&h.mr.state!=='inactive') h.mr.stop(); }};
+}
+function listen(onDone,onErr){
+  if(!SR){
+    if(micMode()==='none'){ toast('Энэ төхөөрөмж дээр микрофон дэмжигдэхгүй байна'); onErr&&onErr(); return null; }
+    return recordListen(onDone,onErr);
+  }
+  const r = new SR();
+  r.lang='en-US'; r.interimResults=false; r.maxAlternatives=3; r.continuous=false;
+  const t0=Date.now();
+  r.onresult = e => {
+    const res = e.results[0];
+    onDone({ text: res[0].transcript, conf: res[0].confidence || 0, ms: Date.now()-t0 });
+  };
+  r.onerror = e => { toast('Микрофон: '+e.error); onErr && onErr(); };
+  r.onend = () => { onErr && onErr(true); };
+  r.start();
+  return r;
+}
+
+/* ============ NAV ============ */
+function go(id,el){
+  if(id==='path') id='curriculum';
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const sec=$(id); if(sec) sec.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  const nav = el || document.querySelector('.nav-item[data-s="'+id+'"]');
+  if(nav) nav.classList.add('active');
+  $('sidebar').classList.remove('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='dashboard') renderDash();
+  if(id==='placement') renderPlacement();
+  if(id==='curriculum') renderCurriculum();
+  if(id==='lesson') renderLesson();
+  if(id==='words'){ renderReview(); renderAllWords(); }
+  if(id==='mistakes') renderMistakes();
+  if(id==='progress') renderProgress();
+  if(id==='pron') renderPron();
+  if(id==='settings') fillSettings();
+}
+function toggleMenu(){ $('sidebar').classList.toggle('open'); }
+
+/* ============ HEADER + DASHBOARD ============ */
+function renderHeader(){
+  $('hXp').textContent='⭐ '+S.user.xp+' XP';
+  $('hStreak').textContent='🔥 '+S.user.streak+' хоног';
+  $('hAvatar').textContent=(S.user.name||'С').trim().charAt(0).toUpperCase();
+  const due=dueWords().length;
+  const b=$('dueBadge'); b.style.display = due?'inline-block':'none'; b.textContent=due;
+}
+function renderDash(){
+  renderHeader();
+  const kb=$('keyBanner');
+  kb.innerHTML = hasKey() ? '' :
+    '<div class="banner">🔑 Gemini API түлхүүр алга. '+(bankStats().ready?('Импортолсон '+bankStats().ready+' хичээл офлайн ажиллана, гэхдээ яриа, шалгалт, AI үнэлгээ хаалттай.'):'AI функцууд ажиллахгүй.')+' <b>Тохиргоо</b> хэсгээс түлхүүр нэмэх эсвэл багшийн пакет файлыг импортлоно уу.</div>';
+  $('hello').textContent='Сайн байна уу'+(S.user.name?', '+S.user.name:'')+'! 👋';
+  $('helloSub').textContent='Өдрийн зорилт: '+S.user.goal+' минут. '+(S.user.level?('Түвшин: '+S.user.level):'Түвшингээ тогтоогоогүй байна.');
+
+  const st=curStage(), nx=nextLessonMeta();
+  if(!S.placement.done){
+    $('dTopic').textContent='Түвшингээ тогтоогоод эхэлье';
+    $('dSub').textContent='15 асуулт. AI түвшин, сул тал тань тодорхойлж, A1→C1 хөтөлбөрийн зөв шатнаас эхлүүлнэ.';
+    $('dBtn').textContent='Тест эхлүүлэх →';
+  }else if(nx){
+    $('dTopic').textContent=nx.topic_mn;
+    $('dSub').textContent=st.id+' шат · '+nx.topic+' · ~'+LEVEL_SPEC[st.base].min+' мин · '+BLOCK_PLAN[st.base].length+' алхам';
+    $('dBtn').textContent='Хичээл эхлүүлэх →';
+  }else{
+    $('dTopic').textContent=st.id+' шат дууслаа 🎉';
+    $('dSub').textContent='Түвшин ахих шалгалтыг 80%-иар давбал дараагийн шат нээгдэнэ.';
+    $('dBtn').textContent='Шалгалт өгөх →';
+  }
+
+  $('sLevel').textContent=S.placement.done?st.id:'—';
+  $('sLevelBar').style.width=Math.round(stageDone(st)/st.topics.length*100)+'%';
+  $('sLevel').nextElementSibling;
+  const known=S.words.filter(w=>w.reps>=3).length;
+  $('sWords').textContent=known;
+  $('sWordsSub').textContent='Нийт '+S.words.length+' үг';
+  const last5=S.pron.slice(-5);
+  $('sPron').textContent= last5.length ? Math.round(last5.reduce((a,b)=>a+b.score,0)/last5.length)+'%' : '—';
+  $('sXp').textContent=S.user.xp;
+
+  $('skillBars').innerHTML = Object.keys(SKILLS).map(k=>{
+    const v=Math.round(S.skills[k]);
+    return '<div class="skill"><div class="skill-top"><span>'+SKILLS[k]+'</span><strong>'+v+'%</strong></div>'+
+      '<div class="progress"><div class="progress-bar" style="width:'+v+'%"></div></div></div>';
+  }).join('');
+
+  $('streakBig').textContent='🔥 '+S.user.streak;
+  $('streakTxt').textContent = S.user.lastDay===today() ? 'Өнөөдрийн хичээлээ хийсэн. Сайн байна!' : 'Өнөөдөр хараахан хичээллээгүй байна.';
+  const days=[]; for(let i=13;i>=0;i--) days.push(new Date(Date.now()-i*DAY).toISOString().slice(0,10));
+  $('cal').innerHTML = days.map(d=>'<i class="'+((S.user.days||[]).includes(d)?'on':'')+'" title="'+d+'"></i>').join('');
+
+  const due=dueWords();
+  $('dueBox').innerHTML = due.length
+    ? '<p class="muted" style="margin-bottom:10px">'+due.length+' үг давтах цаг болжээ.</p>'+
+      due.slice(0,5).map(w=>'<div class="row" style="justify-content:space-between;padding:6px 0"><b>'+esc(w.en)+'</b><span class="muted">'+esc(w.mn)+'</span></div>').join('')+
+      '<button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="go(\'words\');startReview()">Давтах</button>'
+    : '<p class="muted">Одоогоор давтах үг алга. 👍</p>';
+}
+function startToday(){
+  if(!S.placement.done) return go('placement');
+  const n=nextLessonMeta();
+  if(n) return openUnit(n.stage,n.k);
+  const st=curStage();
+  if(stageComplete(st)) return startLevelTest(st.id);
+  go('curriculum');
+}
+
+/* ============ PLACEMENT TEST ============ */
+const OFFLINE_PT = [
+ {level:'A1',skill:'grammar',topic:'to be',q:'She ___ a teacher.',options:['am','is','are','be'],correct:1},
+ {level:'A1',skill:'grammar',topic:'present simple',q:'He ___ to school every day.',options:['go','goes','going','gone'],correct:1},
+ {level:'A1',skill:'vocabulary',topic:'daily life',q:'I have ___ at 7 o\u2019clock in the morning.',options:['dinner','breakfast','night','sleepy'],correct:1},
+ {level:'A2',skill:'grammar',topic:'past simple',q:'Yesterday I ___ to the market.',options:['go','gone','went','going'],correct:2},
+ {level:'A2',skill:'grammar',topic:'comparatives',q:'This book is ___ than that one.',options:['interesting','more interesting','most interesting','interestinger'],correct:1},
+ {level:'A2',skill:'vocabulary',topic:'travel',q:'We stayed in a cheap ___ near the station.',options:['hotel','hospital','library','kitchen'],correct:0},
+ {level:'B1',skill:'grammar',topic:'present perfect',q:'I ___ never been to London.',options:['am','have','did','was'],correct:1},
+ {level:'B1',skill:'grammar',topic:'conditionals',q:'If it rains, we ___ at home.',options:['stayed','will stay','would stay','stays'],correct:1},
+ {level:'B1',skill:'reading',topic:'connectors',q:'She was tired, ___ she finished her homework.',options:['because','so','but','although'],correct:2},
+ {level:'B2',skill:'grammar',topic:'passive',q:'The bridge ___ in 1998.',options:['built','was built','has built','is building'],correct:1},
+ {level:'B2',skill:'vocabulary',topic:'collocation',q:'The company decided to ___ a new policy.',options:['make','do','implement','give'],correct:2},
+ {level:'B2',skill:'grammar',topic:'reported speech',q:'He said he ___ busy the day before.',options:['is','was','has been','will be'],correct:1},
+ {level:'C1',skill:'grammar',topic:'inversion',q:'___ had she arrived when the phone rang.',options:['Hardly','Rarely','Never','Seldom'],correct:0},
+ {level:'C1',skill:'vocabulary',topic:'idiom',q:'The plan fell ___ because of a lack of funding.',options:['out','through','over','away'],correct:1},
+ {level:'C1',skill:'reading',topic:'nuance',q:'His argument was compelling, albeit ___.',options:['flawed','flaw','flawing','to flaw'],correct:0}
+];
+let PT = null;
+
+function renderPlacement(){
+  const box=$('ptBox');
+  if(PT){ return drawPtQuestion(); }
+  if(S.placement.done){
+    $('ptRestart').style.display='inline-block';
+    box.innerHTML='<div class="card level-box"><div class="level">'+esc(S.placement.level)+'</div>'+
+      '<h2>'+esc(LEVEL_NAME[S.placement.level]||'')+'</h2>'+
+      '<p class="muted" style="margin:10px 0 18px">'+esc(S.placement.summary||'')+'</p>'+
+      '<div class="row" style="justify-content:center">'+
+        (S.placement.weak||[]).map(w=>'<span class="chip yellow">'+esc(SKILLS[w]||w)+'</span>').join('')+
+      '</div><p class="muted" style="margin-top:16px">Тест өгсөн: '+esc(S.placement.date||'')+'</p>'+
+      '<button class="btn btn-primary" style="margin-top:18px" onclick="go(\'path\')">🧭 Сургалтын зам харах</button></div>';
+    return;
+  }
+  $('ptRestart').style.display='none';
+  box.innerHTML='<div class="card quiz-card" style="text-align:center;padding:34px">'+
+    '<h2 style="margin-bottom:10px">15 асуулт · 10 минут</h2>'+
+    '<p class="muted" style="margin-bottom:20px;line-height:1.7">Асуултууд A1-ээс C1 хүртэл хүндэрнэ. Мэдэхгүй бол таамаглалгүй "Мэдэхгүй" гэж хариулж болно.<br>Тест дууссаны дараа AI таны түвшин болон сул талыг тодорхойлж, хувийн сургалтын зам үүсгэнэ.</p>'+
+    '<button class="btn btn-primary" onclick="startPlacement()">🎯 Тест эхлүүлэх</button></div>';
+}
+
+async function startPlacement(){
+  const box=$('ptBox'); $('ptRestart').style.display='none';
+  let qs = OFFLINE_PT;
+  if(hasKey()){
+    busy(box,'AI тест бэлдэж байна...');
+    try{
+      const r = await ai(
+        'Create an English placement test for a Mongolian school student. Exactly 15 multiple-choice questions: 3 at A1, 3 at A2, 3 at B1, 3 at B2, 3 at C1, ordered easiest to hardest. Mix grammar, vocabulary and reading. Return JSON array; each item: {"level":"A1","skill":"grammar|vocabulary|reading","topic":"short english label","q":"question with ___ blank","options":["a","b","c","d"],"correct":0,"explain_mn":"Mongolian one sentence explanation"}. Only JSON.',
+        {temp:0.9}
+      );
+      if(Array.isArray(r) && r.length>=10) qs=r;
+    }catch(e){ aiErr(e); if(!hasKey()) return renderPlacement(); toast('Офлайн асуултууд ашиглалаа'); }
+  }
+  PT={qs:qs,i:0,ans:[]};
+  drawPtQuestion();
+}
+function drawPtQuestion(){
+  const q=PT.qs[PT.i];
+  $('ptBox').innerHTML='<div class="card quiz-card">'+
+    '<div class="qmeta"><span>Асуулт '+(PT.i+1)+' / '+PT.qs.length+'</span><span class="chip gray">'+esc(q.level)+'</span></div>'+
+    '<div class="progress" style="margin:12px 0"><div class="progress-bar" style="width:'+Math.round(PT.i/PT.qs.length*100)+'%"></div></div>'+
+    '<div class="question">'+esc(q.q)+'</div>'+
+    '<div class="options">'+q.options.map((o,i)=>'<div class="option" onclick="ptAnswer('+i+')">'+String.fromCharCode(65+i)+'. '+esc(o)+'</div>').join('')+
+    '</div><button class="btn btn-light btn-sm" style="margin-top:14px" onclick="ptAnswer(-1)">Мэдэхгүй</button></div>';
+}
+function ptAnswer(i){
+  const q=PT.qs[PT.i];
+  PT.ans.push({level:q.level,skill:q.skill||'grammar',topic:q.topic||'',q:q.q,
+    picked:i<0?'—':q.options[i],correct:q.options[q.correct],ok:i===q.correct});
+  PT.i++;
+  if(PT.i<PT.qs.length) drawPtQuestion(); else finishPlacement();
+}
+async function finishPlacement(){
+  const box=$('ptBox');
+  const ans=PT.ans; PT=null;
+  const byLevel={};
+  LEVELS.forEach(l=>byLevel[l]={ok:0,n:0});
+  ans.forEach(a=>{ if(byLevel[a.level]){ byLevel[a.level].n++; if(a.ok) byLevel[a.level].ok++; } });
+  let level='A1';
+  for(const l of LEVELS){ const b=byLevel[l]; if(b.n && b.ok/b.n>=0.6) level=l; else break; }
+  const total=ans.filter(a=>a.ok).length;
+  const pct=Math.round(total/ans.length*100);
+
+  const wrongBySkill={};
+  ans.filter(a=>!a.ok).forEach(a=>{ wrongBySkill[a.skill]=(wrongBySkill[a.skill]||0)+1; });
+  let weak=Object.keys(wrongBySkill).sort((a,b)=>wrongBySkill[b]-wrongBySkill[a]).slice(0,3);
+  if(!weak.length) weak=['speaking'];
+  let summary='Нийт '+total+'/'+ans.length+' зөв ('+pct+'%). Таны түвшин '+level+' байна.';
+
+  if(hasKey()){
+    busy(box,'AI хариултыг шинжилж байна...');
+    try{
+      const r=await ai('You are an English placement examiner for Mongolian learners. Here are the answers: '+
+        JSON.stringify(ans.map(a=>({level:a.level,skill:a.skill,topic:a.topic,q:a.q,picked:a.picked,correct:a.correct,ok:a.ok})))+
+        '. Decide the CEFR level (A1,A2,B1,B2,C1) and the 3 weakest areas. Return JSON: {"level":"A2","weak":["grammar","vocabulary","speaking"],"summary_mn":"2-3 sentences in Mongolian: what the student can already do and what to work on","skills":{"vocabulary":0-100,"grammar":0-100,"reading":0-100,"listening":0-100,"speaking":0-100,"pronunciation":0-100}}. Only JSON.',
+        {temp:0.4});
+      if(r.level && LEVELS.includes(r.level)) level=r.level;
+      if(Array.isArray(r.weak)&&r.weak.length) weak=r.weak.filter(w=>w in SKILLS).slice(0,3);
+      if(r.summary_mn) summary=r.summary_mn;
+      if(r.skills) Object.keys(SKILLS).forEach(k=>{ if(typeof r.skills[k]==='number') S.skills[k]=Math.max(0,Math.min(100,r.skills[k])); });
+    }catch(e){ aiErr(e); }
+  }
+  if(!hasKey()){
+    Object.keys(SKILLS).forEach(k=>{ S.skills[k]= k==='pronunciation'||k==='speaking' ? Math.max(20,pct-20) : pct; });
+  }
+  S.placement={done:true,level:level,weak:weak,summary:summary,date:today()};
+  S.user.level=level; S.user.levelPct=pct;
+  S.user.stage=stageIndex(level);
+  S.user.unlocked=Math.max(S.user.unlocked||0,S.user.stage);
+  currStage=level;
+  addXp(50); save();
+  renderPlacement(); renderHeader();
+  await buildPath(true,true);
+  toast('Түвшин: '+level+' · +50 XP');
+}
+
+/* ============ AI ЗӨВЛӨМЖ + НЭМЭЛТ ХИЧЭЭЛ (сургалтын замд нэгдсэн) ============ */
+async function buildPath(force,silent){
+  const st=curStage(), left=st.topics.map((t,i)=>({i:i,en:t[0],mn:t[1],focus:t[2]}))
+    .filter(t=>!S.completed['L_'+st.id+'_'+t.i]);
+  if(!left.length && !S.mistakes.length){ S.rec=null; S.path=[]; save(); if(!silent) renderPath(); return; }
+  if(!hasKey()){
+    S.rec = left.length ? {k:left[0].i,stage:st.id,reason:'Хөтөлбөрийн дараалал ёсоор'} : null;
+    save(); if(!silent) renderPath(); return;
+  }
+  const box=$('pathBox');
+  if(!silent && box) box.innerHTML='<div class="card empty"><span class="loader"></span>AI таны дараагийн алхмыг сонгож байна...</div>';
+  try{
+    const r=await ai('You are planning the next step for a Mongolian student learning English in a step-by-step app.\n'+
+      'Current stage: '+st.id+' ('+st.base+'). Remaining lessons in this stage: '+JSON.stringify(left.map(t=>({i:t.i,topic:t.en,focus:t.focus})))+'.\n'+
+      'Weak skills: '+JSON.stringify(S.placement.weak||[])+'. Skill scores: '+JSON.stringify(S.skills)+'.\n'+
+      'Recent mistakes: '+JSON.stringify(S.mistakes.slice(-12).map(m=>({wrong:m.wrong,correct:m.correct,type:m.type,count:m.count})))+'.\n'+
+      'Choose which remaining lesson to do next and why, then design up to 2 extra remedial lessons that fix the repeated mistakes.\n'+
+      'The extra lessons MUST NOT repeat any topic already in the programme: '+JSON.stringify(allLessonMetas().map(m=>m.topic))+'. '+
+      'Make them narrow error-repair lessons (e.g. "Fixing he/she + s", "Using a / an correctly"), not broad themes. If there are no repeated mistakes worth a lesson, return an empty extra list.\n'+
+      'Return JSON: {"next":{"i":0,"reason":"one short Mongolian sentence"},'+
+      '"extra":[{"topic":"English title","topic_mn":"Mongolian title","skill":"vocabulary|grammar|reading|listening|speaking|pronunciation","reason":"short Mongolian reason"}]}. Only JSON.',
+      {temp:0.7});
+    const pick=(r.next&&left.some(t=>t.i===r.next.i))?r.next:{i:(left[0]||{i:0}).i,reason:'Дараалал ёсоор'};
+    S.rec = left.length ? {k:pick.i,stage:st.id,reason:pick.reason||''} : null;
+    const used=allLessonMetas().map(m=>m.topic.toLowerCase());
+    S.path=(r.extra||[]).filter(it=>it&&it.topic&&used.indexOf(String(it.topic).toLowerCase())<0)
+      .slice(0,2).map((it,i)=>({id:'x'+Date.now()+'_'+i,topic:it.topic,topic_mn:it.topic_mn||it.topic,
+      skill:it.skill||'grammar',reason:it.reason||'Давтагдсан алдаанд зориулав',status:'todo'}));
+    save();
+  }catch(e){ if(!silent) aiErr(e); }
+  if(!silent) renderCurriculum();
+}
+function renderPath(){
+  const box=$('pathBox'); if(!box) return;
+  const st=curStage();
+  if(!S.placement.done){
+    box.innerHTML='<div class="banner">🎯 Эхлээд <b>Түвшин тогтоох тест</b>-ээ өгвөл AI тань зөв шатнаас эхлүүлж, замыг чинь хувьчилна. '+
+      '<button class="btn btn-primary btn-sm" style="margin-left:8px" onclick="go(\'placement\')">Тест өгөх</button></div>';
+    return;
+  }
+  const rec=(S.rec&&S.rec.stage===st.id&&!S.completed['L_'+st.id+'_'+S.rec.k])?S.rec:null;
+  const auto=st.topics.findIndex((t,i)=>!S.completed['L_'+st.id+'_'+i]);
+  const k=rec?rec.k:auto;
+  let html='';
+  if(k>=0){
+    const t=st.topics[k];
+    html+='<div class="daily"><div><p style="opacity:.85;margin-bottom:6px">Дараагийн хичээл · '+st.id+' шат</p>'+
+      '<h2>'+esc(t[1])+'</h2><p>'+esc(t[0])+' · '+esc(t[2])+'</p>'+
+      (rec&&rec.reason?'<p style="margin-top:8px">✨ '+esc(rec.reason)+'</p>':'')+'</div>'+
+      '<button class="btn" onclick="openUnit(\''+st.id+'\','+k+')">Эхлүүлэх →</button></div>';
+  }else{
+    html+='<div class="daily"><div><h2>'+st.id+' шат дууслаа 🎉</h2>'+
+      '<p>Түвшин ахих шалгалтыг 80%-иар давбал дараагийн шат нээгдэнэ.</p></div>'+
+      '<button class="btn" onclick="startLevelTest(\''+st.id+'\')">Шалгалт өгөх →</button></div>';
+  }
+  if((S.path||[]).length){
+    html+='<div class="card"><h3>✨ Алдаа засах нэмэлт хичээл</h3>'+
+      '<p class="muted" style="margin-bottom:12px;font-size:13px">Эдгээр нь хөтөлбөрт байхгүй, зөвхөн таны давтагдсан алдаанд зориулж AI-аас үүсгэсэн хичээлүүд.</p>'+
+      S.path.map(pp=>'<div class="path-item '+(pp.status==='done'?'done':'')+'">'+
+        '<div class="path-num">'+(pp.status==='done'?'✓':'✨')+'</div>'+
+        '<div class="path-body"><strong>'+esc(pp.topic_mn)+'</strong><span class="muted">'+esc(pp.topic)+'</span>'+
+        '<div class="row" style="margin-top:8px"><span class="chip">'+esc(SKILLS[pp.skill]||pp.skill)+'</span>'+
+        '<span class="muted" style="font-size:13px">'+esc(pp.reason)+'</span></div></div>'+
+        '<button class="btn '+(pp.status==='done'?'btn-light':'btn-primary')+' btn-sm" onclick="openLesson(\''+pp.id+'\')">'+
+        (pp.status==='done'?'Дахин':'Эхлэх')+'</button></div>').join('')+'</div>';
+  }
+  box.innerHTML=html;
+}
+/* ============ CURRICULUM (A1-C1, дэд түвшинтэй) ============ */
+const LEVEL_SPEC={
+ A1:{words:6,lines:5,rq:2,quiz:4,min:12,len:'5-8 үг',
+     rule:'Use only: verb be, have got, this/that/these/those, plural nouns, present simple, can/can\u2019t, there is/are, basic prepositions, question words. Only the 600 most frequent words. One clause per sentence. No idioms, no perfect tenses, no passive.'},
+ A2:{words:7,lines:6,rq:3,quiz:4,min:18,len:'8-12 үг',
+     rule:'Use present simple/continuous, past simple, going to/will, comparatives and superlatives, countable/uncountable, some/any, much/many, basic modals, basic present perfect, and conjunctions (and/but/so/because). Maximum two clauses per sentence.'},
+ B1:{words:8,lines:7,rq:3,quiz:5,min:25,len:'12-18 үг',
+     rule:'Use present perfect vs past simple, conditionals 1 and 2, passive voice, relative clauses, used to, gerunds and infinitives, opinion and linking language. Content should invite the student to give reasons and opinions.'},
+ B2:{words:8,lines:9,rq:4,quiz:5,min:32,len:'15-22 үг',
+     rule:'Use passive and impersonal structures, reported speech, third conditional and wish, concession (although/despite), participle and relative clauses, reporting verbs, collocations and phrasal verbs. Content must be argumentative, with two defensible sides.'},
+ C1:{words:8,lines:10,rq:4,quiz:5,min:42,len:'18-28 үг',
+     rule:'Use nominalisation, inversion, cleft sentences, hedging, discourse markers, academic collocations and precise connotation. Content should be intellectually demanding, nuanced and suitable for academic or professional discussion.'}
+};
+const TOPICS={
+ A1:[
+  ['Hello & Introduction','Мэндчилгээ, танилцах','verb be: am / is / are','speaking'],
+  ['My Name','Миний нэр','What is your name? my / your','speaking'],
+  ['Numbers','Тоо','numbers 1-100, How many?','vocabulary'],
+  ['My Family','Миний гэр бүл','have / has, possessive adjectives','vocabulary'],
+  ['My School','Миний сургууль','there is / there are','reading'],
+  ['My Classroom','Ангийн өрөө','this / that / these / those','vocabulary'],
+  ['Colors','Өнгө','adjective + noun','vocabulary'],
+  ['Food & Drinks','Хоол, ундаа','like / don\u2019t like, some / any','vocabulary'],
+  ['My Daily Routine','Өдрийн хуваарь','Present Simple, he/she + s','grammar'],
+  ['My House','Миний гэр','prepositions of place','reading'],
+  ['Clothes','Хувцас','present continuous (intro)','vocabulary'],
+  ['Weather','Цаг агаар','It is + adjective, question words','listening'],
+  ['Animals','Амьтад','can / can\u2019t','vocabulary'],
+  ['Hobbies','Хобби','like + -ing','speaking'],
+  ['My Friends','Найзууд','plural nouns, adjectives','vocabulary'],
+  ['At the Shop','Дэлгүүрт юм авах','How much…? money','speaking'],
+  ['Time','Цаг','What time…? at / in / on','vocabulary'],
+  ['Days & Months','Гараг, сар','prepositions of time','vocabulary'],
+  ['My Town','Миний хот','there is / are + places','reading'],
+  ['Review','A1 давтлага','бүх A1 дүрэм','grammar']
+ ],
+ A2:[
+  ['My Weekend','Миний амралтын өдөр','Past Simple (regular)','grammar'],
+  ['My Last Holiday','Сүүлийн амралт','Past Simple (irregular)','grammar'],
+  ['Shopping and Prices','Дэлгүүр, үнэ','countable / uncountable, much / many','vocabulary'],
+  ['At the Restaurant','Ресторанд','some / any, polite requests','speaking'],
+  ['At the Airport','Онгоцны буудалд','must / have to','listening'],
+  ['My Favorite Movie','Дуртай кино','adjectives, so / because','speaking'],
+  ['Healthy Lifestyle','Эрүүл амьдралын хэв маяг','should / shouldn\u2019t','vocabulary'],
+  ['Jobs','Мэргэжил','Present Simple vs Continuous','grammar'],
+  ['Transportation','Тээвэр','comparative adjectives','vocabulary'],
+  ['Planning a Trip','Аялал төлөвлөх','going to','grammar'],
+  ['Phones and Apps','Утас, аппликейшн','will','grammar'],
+  ['Sports','Спорт','superlative adjectives','vocabulary'],
+  ['School Life','Сургуулийн амьдрал','conjunctions: and / but / so / because','reading'],
+  ['Future Plans','Ирээдүйн төлөвлөгөө','will vs going to','speaking'],
+  ['Problems & Solutions','Асуудал ба шийдэл','Present Perfect (basic)','grammar']
+ ],
+ B1:[
+  ['Social Media','Сошиал медиа','Present Perfect vs Past Simple','reading'],
+  ['Education and Study Habits','Боловсрол, суралцах арга','modals of obligation','speaking'],
+  ['Environment','Байгаль орчин','passive voice','reading'],
+  ['Technology and Habits','Технологи ба зуршил','relative clauses','grammar'],
+  ['Health and Habits','Эрүүл мэнд, зуршил','used to / would','vocabulary'],
+  ['Travel Problems','Аялалын бэрхшээл','reported speech (intro)','grammar'],
+  ['Culture','Соёл','articles & quantifiers','reading'],
+  ['Friendship','Нөхөрлөл','gerunds & infinitives','speaking'],
+  ['Work','Ажил','first conditional','grammar'],
+  ['Money','Мөнгө','second conditional','grammar'],
+  ['AI in Everyday Life','Өдөр тутмын хиймэл оюун','expressing opinion','speaking'],
+  ['Climate Action at Home','Уур амьсгал: өдөр тутмын үйлдэл','cause & effect linkers','reading'],
+  ['Online Learning','Цахим суралцахуй','comparing & contrasting','speaking'],
+  ['Future Jobs','Ирээдүйн мэргэжил','future forms review','grammar']
+ ],
+ B2:[
+  ['AI: Risks and Rules','Хиймэл оюун: эрсдэл, зохицуулалт','hedging & speculation','speaking'],
+  ['Climate Policy and Cost','Уур амьсгал: бодлого, зардал','passive & impersonal structures','reading'],
+  ['Education Systems','Боловсролын тогтолцоо','language of comparison','speaking'],
+  ['Globalization','Даяаршил','concession: although / despite','reading'],
+  ['Technology & Society','Технологи ба нийгэм','participle & relative clauses','grammar'],
+  ['Ethics','Ёс зүй','modal perfect: should have','grammar'],
+  ['Economics','Эдийн засаг','describing data, cause-effect','reading'],
+  ['Science','Шинжлэх ухаан','reporting verbs','grammar'],
+  ['Media','Хэвлэл мэдээлэл','bias, tone and connotation','listening'],
+  ['Leadership','Манлайлал','third conditional, wish','grammar'],
+  ['Psychology of Motivation','Сэдэлжилтийн сэтгэл зүй','abstract noun phrases','vocabulary'],
+  ['Future of Work','Ажлын ирээдүй','forecasting language','speaking']
+ ],
+ C1:[
+  ['AI Ethics','Хиймэл оюуны ёс зүй','nominalisation','speaking'],
+  ['Global Economics','Дэлхийн эдийн засаг','describing complex data','reading'],
+  ['Scientific Discovery','Шинжлэх ухааны нээлт','cleft sentences','grammar'],
+  ['Climate Policy','Уур амьсгалын бодлого','inversion for emphasis','grammar'],
+  ['Education Reform','Боловсролын шинэчлэл','argumentation structures','speaking'],
+  ['Digital Society','Дижитал нийгэм','discourse markers','reading'],
+  ['Philosophy','Гүн ухаан','hypothetical & abstract language','speaking'],
+  ['Psychology of Decision-Making','Шийдвэр гаргалтын сэтгэл зүй','academic collocations','vocabulary'],
+  ['Business','Бизнес','diplomatic & negotiation language','speaking'],
+  ['International Relations','Олон улсын харилцаа','formal register & rhetoric','reading']
+ ]
+};
+const STAGE_SPLIT={A1:[7,7,6],A2:[5,5,5],B1:[5,5,4],B2:[4,4,4],C1:[10]};
+const STAGES=(function(){
+  const out=[];
+  LEVELS.forEach(base=>{
+    let from=0;
+    STAGE_SPLIT[base].forEach((n,si)=>{
+      const id = si===0 ? base : base+'.'+si;
+      out.push({id:id,base:base,from:from,to:from+n,
+        topics:TOPICS[base].slice(from,from+n)});
+      from+=n;
+    });
+  });
+  return out;
+})();
+function stageIndex(id){ return Math.max(0,STAGES.findIndex(s=>s.id===id)); }
+function curStage(){ return STAGES[Math.min(S.user.stage||0,STAGES.length-1)]; }
+function stageDone(st){ return st.topics.filter((t,i)=>S.completed['L_'+st.id+'_'+i]).length; }
+function stageComplete(st){ return stageDone(st)>=st.topics.length; }
+function lessonScore(key){ const c=S.completed[key]; return c&&typeof c==='object'?(c.score||0):0; }
+
+const BLOCK_PLAN={
+ A1:['objective','vocab','grammar','reading','listening','speaking','practice','test','feedback'],
+ A2:['objective','vocab','grammar','reading','listening','speaking','writing','practice','test','feedback'],
+ B1:['objective','vocab','grammar','reading','listening','speaking','conversation','writing','practice','test','feedback'],
+ B2:['objective','vocab','reading','grammar','listening','debate','writing','practice','test','feedback'],
+ C1:['objective','vocab','reading','grammar','debate','conversation','writing','test','feedback']
+};
+const BLOCK_NAME={objective:'🎯 Зорилго',vocab:'🧠 Үгсийн сан',grammar:'📚 Дүрэм',reading:'📖 Унших',
+ listening:'🔊 Сонсох',speaking:'🗣️ Ярих',writing:'✍️ Бичих',practice:'🎮 Дасгал',
+ conversation:'🤖 AI яриа',debate:'⚖️ Мэтгэлцээн',test:'📝 Шалгалт',feedback:'📊 AI дүгнэлт'};
+
+/* ---------- curriculum UI ---------- */
+let currStage=null;
+function renderCurriculum(){
+  renderPath();
+  currStage = currStage || curStage().id;
+  const unlocked=S.user.unlocked||0;
+  $('currTabs').innerHTML=STAGES.map((st,i)=>{
+    const lock=i>unlocked;
+    return '<div class="tab '+(st.id===currStage?'active':'')+(lock?' lock':'')+'" onclick="currStage=\''+st.id+'\';renderCurriculum()">'+
+      (lock?'🔒 ':'')+st.id+(i===(S.user.stage||0)?' ▶':'')+'</div>';
+  }).join('');
+  const st=STAGES[stageIndex(currStage)], i=stageIndex(currStage), locked=i>unlocked;
+  const done=stageDone(st), spec=LEVEL_SPEC[st.base];
+  $('currBox').innerHTML=
+    '<div class="card"><div class="row" style="justify-content:space-between">'+
+      '<b>'+st.id+' · '+esc(LEVEL_NAME[st.base])+'</b><span class="muted">'+done+' / '+st.topics.length+' хичээл</span></div>'+
+      '<div class="progress" style="margin-top:10px"><div class="progress-bar" style="width:'+Math.round(done/st.topics.length*100)+'%"></div></div>'+
+      '<p class="muted" style="margin-top:10px;font-size:13px">Хичээл тус бүр ~'+spec.min+' мин · өгүүлбэр '+spec.len+' · '+BLOCK_PLAN[st.base].length+' алхамтай · 📦 бэлдсэн '+
+        st.topics.filter((t,k)=>S.bank['L_'+st.id+'_'+k]).length+'/'+st.topics.length+'</p>'+
+      (locked?'<div class="banner" style="margin:12px 0 0">🔒 Энэ шат хаалттай. Өмнөх шатаа дуусгаад түвшин ахих шалгалтыг 80%-иар давна уу.</div>':'')+
+      (stageComplete(st)&&!locked?'<div class="row" style="margin-top:12px"><button class="btn btn-primary" onclick="startLevelTest(\''+st.id+'\')">🏁 Түвшин ахих шалгалт өгөх</button>'+
+        (S.levelTests[st.id]?'<span class="chip '+(S.levelTests[st.id].passed?'green':'yellow')+'">Сүүлийн оноо '+S.levelTests[st.id].score+'%</span>':'')+'</div>':'')+
+    '</div>'+
+    st.topics.map((t,k)=>{
+      const key='L_'+st.id+'_'+k, fin=S.completed[key];
+      return '<div class="path-item '+(fin?'done':'')+'">'+
+        '<div class="path-num">'+(fin?'✓':(k+1))+'</div>'+
+        '<div class="path-body"><strong>'+esc(t[1])+'</strong><span class="muted">'+esc(t[0])+'</span>'+
+          '<div class="row" style="margin-top:8px"><span class="chip">'+esc(SKILLS[t[3]]||t[3])+'</span>'+
+          '<span class="chip gray">'+esc(t[2])+'</span>'+
+          (fin&&fin.score?'<span class="chip green">'+fin.score+'%</span>':'')+
+          (S.bank[key]?'<span class="chip gray" title="Офлайн бэлэн">📦</span>':'')+'</div></div>'+
+        (locked?'<span class="chip gray">🔒</span>':
+         '<button class="btn '+(fin?'btn-light':'btn-primary')+' btn-sm" onclick="openUnit(\''+st.id+'\','+k+')">'+(fin?'Дахин':'Эхлэх')+'</button>')+
+        '</div>';
+    }).join('');
+}
+function openUnit(stId,k){
+  const st=STAGES[stageIndex(stId)], t=st.topics[k];
+  makeLesson({key:'L_'+stId+'_'+k,source:'curriculum',stage:stId,level:st.base,
+    topic:t[0],topic_mn:t[1],focus:t[2],skill:t[3]});
+}
+function nextLessonMeta(){
+  const st=curStage();
+  const k=st.topics.findIndex((t,i)=>!S.completed['L_'+st.id+'_'+i]);
+  if(k<0) return null;
+  return {stage:st.id,k:k,topic:st.topics[k][0],topic_mn:st.topics[k][1]};
+}
+
+/* ============ LESSON ENGINE ============ */
+function lessonSchema(blocks,spec){
+  const p=['"topic_mn":"Mongolian lesson title","can_do_mn":"one Mongolian can-do sentence"'];
+  p.push('"vocab":[{"en":"word","mn":"Mongolian","example":"sentence at this level"} x'+spec.words+']');
+  if(blocks.includes('grammar')) p.push('"grammar":{"title_mn":"rule title in Mongolian","explain_mn":"2-4 Mongolian sentences plus one typical Mongolian-learner mistake","examples":["English example" x4],"practice":[{"q":"sentence with ___","answer":"missing word","explain_mn":"short Mongolian"} x3]}');
+  if(blocks.includes('reading')) p.push('"reading":{"title":"title","lines":["sentence" x'+spec.lines+'],"questions":[{"q":"comprehension question in English","options":["a","b","c","d"],"correct":0,"explain_mn":"Mongolian"} x'+spec.rq+']}');
+  if(blocks.includes('listening')) p.push('"listening":{"sentences":["sentence to dictate" x3]}');
+  if(blocks.includes('speaking')) p.push('"speaking":{"prompts":["speaking question" x3],"model_answer":"model spoken answer"}');
+  if(blocks.includes('writing')) p.push('"writing":{"task_mn":"writing task in Mongolian","hints":["useful English phrase" x3],"min_words":30}');
+  if(blocks.includes('conversation')) p.push('"conversation":{"starter":"opening question in English","goal_mn":"Mongolian goal of this conversation"}');
+  if(blocks.includes('debate')) p.push('"debate":{"motion":"debatable statement in English","for_hint":"one argument for","against_hint":"one argument against"}');
+  if(blocks.includes('practice')) p.push('"practice":[{"q":"question with ___","options":["a","b","c","d"],"correct":0,"explain_mn":"Mongolian"} x'+spec.quiz+']');
+  p.push('"test":[{"q":"question with ___","options":["a","b","c","d"],"correct":0,"explain_mn":"Mongolian"} x5]');
+  return '{'+p.join(',')+'}';
+}
+function openLesson(id){
+  const p=S.path.find(x=>x.id===id); if(!p) return;
+  makeLesson({key:id,source:'path',stage:curStage().id,level:S.user.level||'A1',
+    topic:p.topic,topic_mn:p.topic_mn,focus:'',skill:p.skill});
+}
+function regenLesson(){
+  const L=S.lesson; if(!L) return;
+  makeLesson({key:L.key,source:L.source,stage:L.stage,level:L.level,topic:L.topic,
+    topic_mn:L.topic_mn,focus:L.focus,skill:L.skill},true);
+}
+async function generateLessonContent(meta){
+  const spec=LEVEL_SPEC[meta.level]||LEVEL_SPEC.A1, blocks=BLOCK_PLAN[meta.level]||BLOCK_PLAN.A1;
+  const r=await ai('Create one complete English lesson for a Mongolian student, to be used inside a step-by-step app.\n'+
+    'CEFR level: '+meta.level+' ('+LEVEL_NAME[meta.level]+'). Stage: '+meta.stage+'. Lesson length: about '+spec.min+' minutes.\n'+
+    'Topic: "'+meta.topic+'". Language focus: '+(meta.focus||'general')+'. Main skill: '+meta.skill+'.\n'+
+    'LEVEL RULES (obey strictly): sentences of '+spec.len+'. '+spec.rule+'\n'+
+    'All Mongolian text must be natural Mongolian Cyrillic. Return JSON exactly in this shape:\n'+lessonSchema(blocks,spec)+'\nOnly JSON.',
+    {temp:0.8});
+  r.topic_mn=r.topic_mn||meta.topic_mn;
+  r._meta={level:meta.level,stage:meta.stage,topic:meta.topic,focus:meta.focus,skill:meta.skill,made:today()};
+  return r;
+}
+function fromBank(meta,content){
+  return Object.assign({},content,{topic_mn:content.topic_mn||meta.topic_mn,key:meta.key,level:meta.level,
+    topic:meta.topic,source:meta.source,stage:meta.stage,focus:meta.focus,skill:meta.skill,failed:false,res:{}});
+}
+async function makeLesson(meta,force){
+  go('lesson');
+  if(!force && S.lesson && S.lesson.key===meta.key && !S.lesson.failed) return startPlayer(S.lesson);
+  const box=$('lessonBox'), blocks=BLOCK_PLAN[meta.level]||BLOCK_PLAN.A1;
+  if(!force && S.bank[meta.key]){
+    S.lesson=fromBank(meta,S.bank[meta.key]); save(); return startPlayer(S.lesson);
+  }
+  if(!hasKey()){
+    box.innerHTML='<div class="card empty">🔑 Энэ хичээл таны төхөөрөмж дээр бэлдэгдээгүй байна.<br>'+
+      'Багшаасаа <b>хичээлийн пакет</b> файл авч импортлох, эсвэл Gemini API түлхүүр нэмнэ үү.'+
+      '<br><button class="btn btn-primary" style="margin-top:12px" onclick="go(\'settings\')">⚙️ Тохиргоо</button></div>';
+    return;
+  }
+  busy(box,'AI "'+meta.topic_mn+'" хичээлийг '+meta.level+' түвшинд бэлдэж байна ('+blocks.length+' алхам)...');
+  try{
+    const r=await generateLessonContent(meta);
+    S.bank[meta.key]=r;
+    S.lesson=fromBank(meta,r);
+    save(); startPlayer(S.lesson);
+  }catch(e){
+    aiErr(e);
+    box.innerHTML='<div class="card empty">Хичээл үүсгэж чадсангүй.<br><button class="btn btn-primary" style="margin-top:12px" onclick="regenLesson()">↻ Дахин оролдох</button></div>';
+  }
+}
+
+/* ---------- player ---------- */
+let LP=null;
+function startPlayer(L,step){
+  LP={L:L,blocks:BLOCK_PLAN[L.level]||BLOCK_PLAN.A1,i:step||0,res:L.res||{},t0:Date.now()};
+  renderPlayer();
+}
+function renderPlayer(){
+  const L=LP.L,b=LP.blocks[LP.i];
+  $('lessonSub').textContent=L.topic+' · '+L.level+' · '+(LP.i+1)+'/'+LP.blocks.length+' алхам';
+  const dots=LP.blocks.map((x,i)=>'<span class="sdot '+(i<LP.i?'past':i===LP.i?'now':'')+'" title="'+BLOCK_NAME[x]+'" onclick="jumpBlock('+i+')">'+
+    (i<LP.i?'✓':(i+1))+'</span>').join('');
+  $('lessonBox').innerHTML=
+    '<div class="card"><div class="row" style="justify-content:space-between">'+
+      '<div><h2 style="font-size:21px">'+esc(L.topic_mn)+'</h2>'+
+      '<p class="muted">'+esc(L.topic)+' · '+esc(L.level)+' · '+esc(L.focus||'')+'</p></div>'+
+      '<button class="btn btn-light btn-sm" onclick="regenLesson()">↻ Дахин үүсгэх</button></div>'+
+      '<div class="steps">'+dots+'</div></div>'+
+    '<div class="card"><h3>'+BLOCK_NAME[b]+'</h3><div id="blk"></div></div>'+
+    '<div class="row" style="justify-content:space-between;margin-bottom:30px">'+
+      '<button class="btn btn-light" '+(LP.i?'':'disabled')+' onclick="prevBlock()">← Буцах</button>'+
+      (b==='feedback'?'':'<button class="btn btn-primary" onclick="nextBlock()">Дараах: '+esc(BLOCK_NAME[LP.blocks[LP.i+1]]||'')+' →</button>')+
+    '</div>';
+  drawBlock(b);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function jumpBlock(i){ if(i<=LP.i){ LP.i=i; renderPlayer(); } }
+function prevBlock(){ if(LP.i){ LP.i--; renderPlayer(); } }
+function nextBlock(){ if(LP.i<LP.blocks.length-1){ LP.i++; renderPlayer(); } }
+function setRes(k,v){ LP.res[k]=v; LP.L.res=LP.res; save(); }
+
+function drawBlock(b){
+  const L=LP.L, box=$('blk');
+  if(b==='objective'){
+    const spec=LEVEL_SPEC[L.level];
+    box.innerHTML='<div class="ai-message" style="margin-top:0;font-size:16px">🎯 '+esc(L.can_do_mn||'')+'</div>'+
+      '<div class="row" style="margin-top:14px"><span class="chip">~'+spec.min+' минут</span>'+
+      '<span class="chip gray">'+(L.vocab||[]).length+' шинэ үг</span>'+
+      '<span class="chip gray">'+LP.blocks.length+' алхам</span>'+
+      (L.focus?'<span class="chip yellow">'+esc(L.focus)+'</span>':'')+'</div>'+
+      '<p class="muted" style="margin-top:14px;line-height:1.7">Алхамууд: '+LP.blocks.map(x=>BLOCK_NAME[x]).join(' → ')+'</p>';
+  }
+  else if(b==='vocab'){
+    box.innerHTML='<div class="vocab">'+(L.vocab||[]).map(v=>
+      '<div class="word" data-en="'+esc(v.en)+'" onclick="speak(this.dataset.en)"><strong>'+esc(v.en)+' 🔊</strong>'+
+      '<span>'+esc(v.mn)+'</span>'+(v.example?'<div class="muted" style="font-size:13px;margin-top:6px;font-style:italic">'+esc(v.example)+'</div>':'')+'</div>').join('')+'</div>'+
+      '<div class="row" style="margin-top:14px"><button class="btn btn-light btn-sm" onclick="addLessonWords()">🧠 Үгийн санд нэмэх</button>'+
+      '<button class="btn btn-light btn-sm" onclick="vocabDrill()">🎮 Хурдан дасгал</button></div><div id="vdrill"></div>';
+  }
+  else if(b==='grammar'){
+    const g=L.grammar||{};
+    box.innerHTML='<div class="ai-message" style="margin-top:0"><b>'+esc(g.title_mn||L.focus||'Дүрэм')+'</b><br>'+esc(g.explain_mn||'')+'</div>'+
+      '<div style="margin-top:12px">'+(g.examples||[]).map(e=>
+        '<div class="row" style="justify-content:space-between;padding:5px 0"><span>'+esc(e)+'</span>'+
+        '<button class="btn btn-light btn-sm" data-en="'+esc(e)+'" onclick="speak(this.dataset.en)">🔊</button></div>').join('')+'</div>'+
+      ((g.practice||[]).length?'<h4 style="margin:16px 0 8px">Дүүргэх дасгал</h4>'+
+        (g.practice||[]).map((p,i)=>'<div class="field"><label>'+esc(p.q)+'</label>'+
+          '<div class="row" style="flex-wrap:nowrap"><input id="gp'+i+'" placeholder="Хариу...">'+
+          '<button class="btn btn-light btn-sm" onclick="checkGap('+i+')">Шалгах</button></div>'+
+          '<div id="gpr'+i+'" class="muted" style="font-size:13px;margin-top:5px"></div></div>').join(''):'');
+  }
+  else if(b==='reading'){
+    const R=L.reading||{lines:[]};
+    box.innerHTML='<div class="dialogue"><strong>'+esc(R.title||L.topic)+'</strong><br><br>'+
+      (R.lines||[]).map(l=>'<p>'+esc(l)+'</p>').join('')+
+      '<button class="btn btn-light" style="margin-top:14px" onclick="speak(readingText())">🔊 Сонсох</button></div>'+
+      ((R.questions||[]).length?'<h4 style="margin:18px 0 10px">Ойлголтын шалгалт</h4><div id="rq"></div>':'');
+    if((R.questions||[]).length) drawInlineQuiz('rq',R.questions,'reading');
+  }
+  else if(b==='listening'){
+    const sents=((L.listening||{}).sentences)||[];
+    box.innerHTML='<p class="muted" style="margin-bottom:14px">Өгүүлбэрийг сонсоод яг сонссоноороо бичээрэй (диктант). Систем үг бүрийг харьцуулна.</p>'+
+      sents.map((s,i)=>'<div class="card" style="background:#f8fafc;margin-bottom:12px">'+
+        '<div class="row" style="flex-wrap:nowrap"><button class="btn btn-light btn-sm" data-en="'+esc(s)+'" onclick="speak(this.dataset.en)">🔊 '+(i+1)+'</button>'+
+        '<button class="btn btn-light btn-sm" data-en="'+esc(s)+'" onclick="speak(this.dataset.en,0.6)">🐢</button>'+
+        '<input id="dic'+i+'" placeholder="Сонссоноо бич..."><button class="btn btn-primary btn-sm" onclick="checkDictation('+i+')">Шалгах</button></div>'+
+        '<div id="dicr'+i+'" style="margin-top:9px"></div></div>').join('');
+  }
+  else if(b==='speaking'){
+    const SP=L.speaking||{prompts:[]};
+    box.innerHTML='<p class="muted" style="margin-bottom:12px">Асуултад англиар хариулж ярина уу. AI 5 үзүүлэлтээр үнэлнэ: Grammar · Vocabulary · Fluency · Pronunciation · Ideas.</p>'+
+      '<div class="pron-target" id="spPrompt">'+esc((SP.prompts||[''])[0])+'</div>'+
+      '<div class="row" style="justify-content:center">'+
+        '<button class="btn btn-light" onclick="speak(document.getElementById(\'spPrompt\').innerText)">🔊 Сонсох</button>'+
+        '<button class="mic" id="spMic" onclick="micSpeak()">🎤</button>'+
+        '<button class="btn btn-light" onclick="nextPrompt()">⇄ Өөр асуулт</button>'+
+      '</div>'+(SP.model_answer?'<p class="muted" style="text-align:center;margin-top:12px">Жишээ хариу: <i>'+esc(SP.model_answer)+'</i></p>':'')+
+      '<div id="spResult"></div>';
+  }
+  else if(b==='conversation'||b==='debate'){
+    const isDeb=(b==='debate');
+    const C=isDeb?(L.debate||{}):(L.conversation||{});
+    if(!LP.res[b]) setRes(b,{turns:[],side:null,started:false});
+    const st=LP.res[b];
+    box.innerHTML=(isDeb
+      ? '<div class="ai-message" style="margin-top:0"><b>Мэтгэлцээний сэдэв:</b><br>'+esc(C.motion||L.topic)+'</div>'+
+        (st.side?'<div class="row" style="margin-top:12px"><span class="chip">Таны тал: '+esc(st.side)+'</span></div>'
+          :'<div class="row" style="margin-top:12px"><button class="btn btn-primary" onclick="pickSide(\'FOR\')">👍 FOR (дэмжинэ)</button>'+
+           '<button class="btn btn-light" onclick="pickSide(\'AGAINST\')">👎 AGAINST (эсэргүүцнэ)</button></div>'+
+           '<p class="muted" style="margin-top:10px;font-size:13px">Санаа: '+esc(C.for_hint||'')+' / '+esc(C.against_hint||'')+'</p>')
+      : '<p class="muted" style="margin-bottom:10px">'+esc(C.goal_mn||'AI-тай энэ сэдвээр 4 өгүүлбэр солилцоорой.')+'</p>')+
+      '<div class="chat" id="lchat" style="height:300px;margin-top:12px"></div>'+
+      '<div class="chat-input"><button class="mic" id="lcMic" onclick="micLesson()">🎤</button>'+
+      '<input id="lcInput" placeholder="Англиар бич..." onkeydown="if(event.key===\'Enter\')lessonSay()">'+
+      '<button class="btn btn-primary" onclick="lessonSay()">Илгээх</button></div>'+
+      '<div class="row" style="margin-top:10px"><button class="btn btn-light btn-sm" onclick="evalTalk()">📊 Яриаг үнэлүүлэх</button>'+
+      '<span class="muted" style="font-size:13px">'+st.turns.filter(t=>t.role==='user').length+' удаа ярьсан</span></div><div id="talkEval"></div>';
+    if(!st.started && (!isDeb || st.side)){
+      st.started=true; st.turns.push({role:'ai',text:(isDeb?('Motion: '+(C.motion||'')+' You are '+st.side+'. Give me your first argument.'):(C.starter||'Let\u2019s talk about '+L.topic+'. What do you think?'))});
+      setRes(b,st);
+    }
+    drawLessonChat();
+  }
+  else if(b==='writing'){
+    const W=L.writing||{};
+    const essay=(L.level==='B2'||L.level==='C1');
+    box.innerHTML='<p style="line-height:1.7">'+esc(W.task_mn||'Сэдвийн талаар бичээрэй.')+'</p>'+
+      ((W.hints||[]).length?'<div class="row" style="margin-top:10px">'+(W.hints||[]).map(h=>'<span class="chip gray">'+esc(h)+'</span>').join('')+'</div>':'')+
+      '<textarea id="writing" style="height:'+(essay?200:140)+'px;margin-top:14px;resize:vertical" placeholder="'+(essay?'Эссэгээ энд бич (оршил · үндсэн хэсэг · дүгнэлт)...':'Англиар бич...')+'"></textarea>'+
+      '<div class="row" style="margin-top:10px"><button class="btn btn-primary" onclick="checkWriting('+(essay?'true':'false')+')">✨ AI шалгах</button>'+
+      '<span class="muted" id="wcount">0 үг</span></div><div id="writingResult"></div>';
+    const ta=$('writing');
+    ta.oninput=()=>{ $('wcount').textContent=(ta.value.trim().split(/\s+/).filter(Boolean).length)+' үг'+(W.min_words?(' / '+W.min_words):''); };
+  }
+  else if(b==='practice'){ box.innerHTML='<div id="pq"></div>'; drawInlineQuiz('pq',L.practice||[],'practice'); }
+  else if(b==='test'){ box.innerHTML='<div id="tq"></div>'; drawInlineQuiz('tq',L.test||[],'test'); }
+  else if(b==='feedback'){ drawFeedback(); }
+}
+
+/* ---------- block helpers ---------- */
+function readingText(){ return (((S.lesson||{}).reading||{}).lines||[]).join(' '); }
+function addLessonWords(){
+  let n=0; ((S.lesson||{}).vocab||[]).forEach(w=>{ if(addWord(w.en,w.mn,w.example)) n++; });
+  save(); renderHeader(); toast(n?(n+' үг санд нэмэгдлээ'):'Бүх үг аль хэдийн санд байна');
+}
+function vocabDrill(){
+  const v=((S.lesson||{}).vocab)||[]; if(v.length<3) return;
+  const q=v.map(w=>{
+    const others=v.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.en);
+    const opts=[w.en].concat(others).sort(()=>Math.random()-0.5);
+    return {q:'"'+w.mn+'" = ?',options:opts,correct:opts.indexOf(w.en),explain_mn:w.en+' = '+w.mn};
+  });
+  drawInlineQuiz('vdrill',q,'vocab');
+}
+function checkGap(i){
+  const G=(S.lesson||{}).grammar||{}, p=(G.practice||[])[i]; if(!p) return;
+  const val=norm($('gp'+i).value), ans=norm(p.answer||'');
+  const ok=val===ans||sim(val,ans)>0.85;
+  $('gpr'+i).innerHTML=ok?'<span class="good">✅ Зөв</span>':'<span class="bad">❌ Зөв хариу: '+esc(p.answer)+'</span> '+esc(p.explain_mn||'');
+  if(ok){ addXp(3); bump('grammar',1); } else addMistake(p.q.replace('___',$('gp'+i).value||'?'),p.q.replace('___',p.answer),'grammar',p.explain_mn||'');
+}
+function checkDictation(i){
+  const s=(((S.lesson||{}).listening||{}).sentences||[])[i]; if(s==null) return;
+  const said=$('dic'+i).value;
+  const a=alignScore(s,said);
+  const score=Math.round(a.scores.reduce((x,y)=>x+y,0)/Math.max(1,a.scores.length)*100);
+  $('dicr'+i).innerHTML='<div class="row"><span class="chip '+(score>=85?'green':score>=60?'yellow':'red')+'">'+score+'%</span>'+
+    '<span style="font-size:17px">'+a.words.map((w,k)=>'<span class="pw '+(a.scores[k]>=0.85?'ok':a.scores[k]>=0.6?'mid':'bad')+'">'+esc(w)+'</span>').join(' ')+'</span></div>';
+  bump('listening',score>=85?2:score>=60?1:0.3);
+  if(score>=85) addXp(6);
+  const r=LP.res.listening||{scores:[]}; r.scores[i]=score; setRes('listening',r);
+}
+let spIdx=0;
+function nextPrompt(){
+  const ps=((S.lesson||{}).speaking||{}).prompts||[]; if(!ps.length) return;
+  spIdx=(spIdx+1)%ps.length; $('spPrompt').textContent=ps[spIdx]; $('spResult').innerHTML='';
+}
+let spRec=null;
+function micSpeak(){
+  const btn=$('spMic');
+  if(spRec){ spRec.stop(); spRec=null; btn.classList.remove('rec'); return; }
+  btn.classList.add('rec');
+  spRec=listen(res=>{ spRec=null; btn.classList.remove('rec'); gradeSpeaking(res); },
+               ()=>{ spRec=null; btn.classList.remove('rec'); });
+}
+async function gradeSpeaking(res){
+  const box=$('spResult'), prompt=$('spPrompt').innerText;
+  const wpm=Math.round(res.text.split(/\s+/).filter(Boolean).length/Math.max(0.5,res.ms/1000)*60);
+  box.innerHTML='<div class="ai-message"><span class="loader"></span>AI үнэлж байна...</div>';
+  if(!hasKey()){ box.innerHTML='<div class="ai-message">🔑 API түлхүүр хэрэгтэй.</div>'; return; }
+  try{
+    const r=await ai('A Mongolian '+(S.lesson.level)+' student was asked: "'+prompt+'". They said: "'+res.text+
+      '" (speech rate '+wpm+' words per minute). Score each criterion 0-100 and be encouraging but honest. '+
+      'Return JSON: {"grammar":0,"vocabulary":0,"fluency":0,"pronunciation":0,"ideas":0,"overall":0,'+
+      '"feedback_mn":"2-3 Mongolian sentences","better":"an improved version of their answer at their level",'+
+      '"correction":{"wrong":"","correct":"","why_mn":""} or null}. Only JSON.',{temp:0.5});
+    const bars=['grammar','vocabulary','fluency','pronunciation','ideas'].map(k=>
+      '<div class="skill"><div class="skill-top"><span>'+(k==='ideas'?'Санаа':SKILLS[k]||k)+'</span><strong>'+(r[k]||0)+'%</strong></div>'+
+      '<div class="progress"><div class="progress-bar" style="width:'+(r[k]||0)+'%"></div></div></div>').join('');
+    box.innerHTML='<div class="card" style="margin-top:16px"><div class="score-ring" style="background:'+
+      ((r.overall||0)>=80?'#16a34a':(r.overall||0)>=60?'#f59e0b':'#dc2626')+'">'+(r.overall||0)+'<small>overall</small></div>'+
+      '<div style="margin-top:18px">'+bars+'</div>'+
+      '<p class="muted" style="margin-top:8px">Таны хэлсэн: "'+esc(res.text)+'" · '+wpm+' үг/мин</p>'+
+      '<div class="ai-message">'+esc(r.feedback_mn||'')+(r.better?'<br><br><b>Сайжруулсан:</b> <i>'+esc(r.better)+'</i>':'')+'</div></div>';
+    if(r.correction&&r.correction.correct) addMistake(r.correction.wrong||res.text,r.correction.correct,'speaking',r.correction.why_mn||'');
+    bump('speaking',(r.overall||0)>=70?2.5:1); bump('pronunciation',(r.pronunciation||0)>=70?1.5:0.5);
+    S.pron.push({date:today(),text:prompt,score:r.pronunciation||0,said:res.text,badWords:[]}); S.pron=S.pron.slice(-40);
+    const acc=LP.res.speaking||{list:[]}; acc.list.push(r.overall||0); setRes('speaking',acc);
+    addXp(12); save(); renderHeader();
+  }catch(e){ aiErr(e); box.innerHTML=''; }
+}
+function drawLessonChat(){
+  const b=LP.blocks[LP.i], st=LP.res[b]||{turns:[]};
+  const c=$('lchat'); if(!c) return;
+  c.innerHTML=st.turns.map(t=>t.role==='user'
+    ? '<div class="message user">'+esc(t.text)+'</div>'+(t.correction?'<div class="correction">✏️ <b>'+esc(t.correction.correct)+'</b> — '+esc(t.correction.why_mn||'')+'</div>':'')
+    : '<div class="message ai" data-en="'+esc(t.text)+'" onclick="speak(this.dataset.en)">'+esc(t.text)+'</div>').join('');
+  c.scrollTop=c.scrollHeight;
+}
+function pickSide(side){
+  const st=LP.res.debate||{turns:[]}; st.side=side; st.started=false; setRes('debate',st); renderPlayer();
+}
+let lcRec=null;
+function micLesson(){
+  const btn=$('lcMic');
+  if(lcRec){ lcRec.stop(); lcRec=null; btn.classList.remove('rec'); return; }
+  btn.classList.add('rec');
+  lcRec=listen(res=>{ lcRec=null; btn.classList.remove('rec'); lessonSay(res.text); },
+               ()=>{ lcRec=null; btn.classList.remove('rec'); });
+}
+async function lessonSay(txt){
+  const b=LP.blocks[LP.i], st=LP.res[b]||{turns:[]}, L=LP.L;
+  const text=(typeof txt==='string'?txt:$('lcInput').value).trim();
+  if(!text) return;
+  $('lcInput').value='';
+  st.turns.push({role:'user',text:text}); setRes(b,st); drawLessonChat();
+  if(!hasKey()){ toast('API түлхүүр хэрэгтэй'); return; }
+  const c=$('lchat'); const w=document.createElement('div'); w.className='message ai'; w.innerHTML='<span class="loader"></span>...';
+  c.appendChild(w); c.scrollTop=c.scrollHeight;
+  try{
+    const hist=st.turns.slice(-10).map(t=>(t.role==='user'?'Student: ':'You: ')+t.text).join('\n');
+    const role = b==='debate'
+      ? 'You are a debate partner. The student argues '+(st.side||'FOR')+' the motion: "'+((L.debate||{}).motion||L.topic)+'". Challenge their argument with one counter-point and one probing question. Stay respectful.'
+      : 'You are a friendly conversation partner discussing "'+L.topic+'" with the student. Respond in 1-2 sentences and always end with a question that pushes them to explain more.';
+    const r=await ai('Conversation:\n'+hist+'\n\n'+role+' Student CEFR level: '+L.level+
+      '. Match your English to that level. If the student made a clear mistake, add a correction. '+
+      'Return JSON: {"reply":"","correction":{"wrong":"","correct":"","why_mn":""} or null}. Only JSON.',{temp:0.85});
+    w.remove();
+    const last=st.turns[st.turns.length-1];
+    if(r.correction&&r.correction.correct){ last.correction=r.correction; addMistake(r.correction.wrong||text,r.correction.correct,'speaking',r.correction.why_mn||''); }
+    st.turns.push({role:'ai',text:r.reply||'...'});
+    setRes(b,st); drawLessonChat(); speak(r.reply);
+    bump('speaking',1); addXp(5);
+  }catch(e){ w.remove(); aiErr(e); }
+}
+async function evalTalk(){
+  const b=LP.blocks[LP.i], st=LP.res[b]||{turns:[]}, box=$('talkEval');
+  const mine=st.turns.filter(t=>t.role==='user').map(t=>t.text);
+  if(mine.length<2){ toast('Дор хаяж 2 удаа ярина уу'); return; }
+  if(!hasKey()){ toast('API түлхүүр хэрэгтэй'); return; }
+  box.innerHTML='<div class="ai-message"><span class="loader"></span>AI үнэлж байна...</div>';
+  try{
+    const r=await ai('Evaluate this Mongolian '+LP.L.level+' student\u2019s contributions in an English '+(b==='debate'?'debate':'discussion')+': '+
+      JSON.stringify(mine)+'. Return JSON: {"grammar":0,"vocabulary":0,"fluency":0,"ideas":0,"argumentation":0,"overall":0,'+
+      '"feedback_mn":"2-3 Mongolian sentences","next_step_mn":"one Mongolian sentence: what to practise next"}. Only JSON.',{temp:0.5});
+    box.innerHTML='<div class="ai-message"><b>📊 Үнэлгээ: '+(r.overall||0)+'/100</b><br>'+
+      ['grammar','vocabulary','fluency','ideas','argumentation'].map(k=>k+': '+(r[k]||0)).join(' · ')+'<br><br>'+
+      esc(r.feedback_mn||'')+(r.next_step_mn?'<br><br>➡️ '+esc(r.next_step_mn):'')+'</div>';
+    st.score=r.overall||0; setRes(b,st);
+    bump('speaking',2); addXp(10);
+  }catch(e){ aiErr(e); box.innerHTML=''; }
+}
+async function checkWriting(essay){
+  const text=$('writing').value.trim(), res=$('writingResult'), L=LP?LP.L:S.lesson;
+  if(text.length<15){ res.innerHTML='<div class="ai-message">✍️ Арай илүү урт бичээрэй.</div>'; return; }
+  if(!hasKey()){ res.innerHTML='<div class="ai-message">🔑 API түлхүүр хэрэгтэй.</div>'; return; }
+  res.innerHTML='<div class="ai-message"><span class="loader"></span>AI шалгаж байна...</div>';
+  try{
+    const r = essay
+      ? await ai('You are an academic English examiner. A Mongolian '+L.level+' student wrote this '+
+          ((L.writing||{}).task_mn?'response to the task: '+(L.writing||{}).task_mn:'essay')+':\n"""'+text+'"""\n'+
+          'Return JSON: {"grammar":0,"vocabulary":0,"coherence":0,"argumentation":0,"overall_band":"B2+","feedback_mn":"3-4 Mongolian sentences",'+
+          '"corrections":[{"wrong":"","correct":"","why_mn":"","type":"grammar|vocabulary|style"}],"model_paragraph":"one improved paragraph"}. Only JSON.',{temp:0.4})
+      : await ai('You are a kind English teacher for a Mongolian '+L.level+' student. Check this writing: """'+text+'""". '+
+          'Return JSON: {"score":0,"feedback_mn":"2-3 encouraging Mongolian sentences","corrections":[{"wrong":"","correct":"","why_mn":"","type":"grammar|vocabulary|spelling"}],"better_version":""}. Only JSON.',{temp:0.4});
+    (r.corrections||[]).forEach(c=>addMistake(c.wrong,c.correct,c.type||'grammar',c.why_mn));
+    const score = essay ? Math.round(((r.grammar||0)+(r.vocabulary||0)+(r.coherence||0)+(r.argumentation||0))/4) : (r.score||0);
+    const head = essay
+      ? '<b>📊 '+(r.overall_band||'')+'</b><br>Grammar '+(r.grammar||0)+' · Vocabulary '+(r.vocabulary||0)+' · Coherence '+(r.coherence||0)+' · Argumentation '+(r.argumentation||0)
+      : '<b>🤖 AI үнэлгээ: '+score+'/100</b>';
+    res.innerHTML='<div class="ai-message">'+head+'<br>'+esc(r.feedback_mn||'')+
+      ((r.corrections||[]).length?'<div style="margin-top:10px">'+r.corrections.map(c=>
+        '<div style="margin-bottom:7px"><span class="bad">❌ '+esc(c.wrong)+'</span> → <span class="good">✅ '+esc(c.correct)+'</span>'+
+        (c.why_mn?'<br><span class="muted" style="font-size:13px">'+esc(c.why_mn)+'</span>':'')+'</div>').join('')+'</div>':'<br>🎉 Алдаа олдсонгүй!')+
+      ((r.better_version||r.model_paragraph)?'<div style="margin-top:10px"><b>Жишээ:</b><br><i>'+esc(r.better_version||r.model_paragraph)+'</i></div>':'')+'</div>';
+    setRes('writing',{score:score});
+    bump('grammar',score>=70?2:1); bump('vocabulary',1); addXp(15); save();
+  }catch(e){ aiErr(e); res.innerHTML='<div class="ai-message">Шалгаж чадсангүй.</div>'; }
+}
+/* inline quiz used by reading / practice / test / vocab drill */
+const IQ={};
+function drawInlineQuiz(elId,qs,tag){
+  IQ[elId]={qs:qs,i:0,right:0,tag:tag};
+  drawIQ(elId);
+}
+function drawIQ(elId){
+  const st=IQ[elId], q=st.qs[st.i], box=$(elId);
+  if(!q){
+    const pct=Math.round(st.right/st.qs.length*100);
+    box.innerHTML='<div class="ai-message"><b>'+st.right+' / '+st.qs.length+' зөв ('+pct+'%)</b> '+
+      (pct>=80?'🎉 Сайн байна!':pct>=50?'Дажгүй, давтъя.':'Энэ хэсгийг дахин үзье.')+'</div>';
+    if(LP){ const r=LP.res[st.tag]||{}; r.score=pct; setRes(st.tag,r); }
+    return;
+  }
+  box.innerHTML='<div class="qmeta"><span>'+(st.i+1)+' / '+st.qs.length+'</span></div>'+
+    '<div class="question" style="font-size:18px">'+esc(q.q)+'</div>'+
+    '<div class="options">'+(q.options||[]).map((o,i)=>'<div class="option" onclick="answerIQ(\''+elId+'\',this,'+i+')">'+
+      String.fromCharCode(65+i)+'. '+esc(o)+'</div>').join('')+'</div><div id="'+elId+'_r" style="margin-top:12px"></div>';
+}
+function answerIQ(elId,el,i){
+  const st=IQ[elId], q=st.qs[st.i], ok=(i===q.correct);
+  $(elId).querySelectorAll('.option').forEach((o,idx)=>{ o.style.pointerEvents='none'; if(idx===q.correct) o.classList.add('correct'); });
+  if(!ok){ el.classList.add('wrong'); addMistake(String(q.q).replace('___',q.options[i]),String(q.q).replace('___',q.options[q.correct]),st.tag==='vocab'?'vocabulary':'grammar',q.explain_mn||''); }
+  else { st.right++; addXp(5); bump(st.tag==='vocab'?'vocabulary':st.tag==='reading'?'reading':'grammar',1); }
+  S.stats.qTotal++; if(ok) S.stats.qRight++; save();
+  $(elId+'_r').innerHTML='<div class="ai-message">'+(ok?'✅ Зөв!':'❌ Зөв хариу: <b>'+esc(q.options[q.correct])+'</b>')+
+    (q.explain_mn?'<br>'+esc(q.explain_mn):'')+'</div>'+
+    '<button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="IQ[\''+elId+'\'].i++;drawIQ(\''+elId+'\')">'+
+    (st.i+1<st.qs.length?'Дараах →':'Дүн харах')+'</button>';
+}
+
+/* ---------- feedback + finish ---------- */
+async function drawFeedback(){
+  const box=$('blk'), L=LP.L, res=LP.res;
+  const parts=[];
+  if(res.test&&res.test.score!=null) parts.push('Мини шалгалт: '+res.test.score+'%');
+  if(res.practice&&res.practice.score!=null) parts.push('Дасгал: '+res.practice.score+'%');
+  if(res.reading&&res.reading.score!=null) parts.push('Унших: '+res.reading.score+'%');
+  if(res.listening&&(res.listening.scores||[]).length) parts.push('Диктант: '+Math.round(res.listening.scores.reduce((a,b)=>a+b,0)/res.listening.scores.length)+'%');
+  if(res.speaking&&(res.speaking.list||[]).length) parts.push('Ярих: '+Math.round(res.speaking.list.reduce((a,b)=>a+b,0)/res.speaking.list.length)+'%');
+  if(res.writing&&res.writing.score) parts.push('Бичих: '+res.writing.score+'%');
+  if(res.debate&&res.debate.score) parts.push('Мэтгэлцээн: '+res.debate.score+'%');
+  const nums=[]; 
+  if(res.test&&res.test.score!=null) nums.push(res.test.score);
+  if(res.practice&&res.practice.score!=null) nums.push(res.practice.score);
+  if(res.reading&&res.reading.score!=null) nums.push(res.reading.score);
+  if(res.writing&&res.writing.score) nums.push(res.writing.score);
+  if(res.speaking&&(res.speaking.list||[]).length) nums.push(Math.round(res.speaking.list.reduce((a,b)=>a+b,0)/res.speaking.list.length));
+  const overall=nums.length?Math.round(nums.reduce((a,b)=>a+b,0)/nums.length):0;
+  box.innerHTML='<div class="score-ring" style="background:'+(overall>=80?'#16a34a':overall>=60?'#f59e0b':'#dc2626')+'">'+overall+'<small>хичээл</small></div>'+
+    '<div class="row" style="justify-content:center;margin-top:16px">'+(parts.length?parts.map(p=>'<span class="chip">'+esc(p)+'</span>').join(''):'<span class="muted">Алхмуудыг хийгээгүй байна</span>')+'</div>'+
+    '<div id="aiFb"></div>'+
+    '<div class="row" style="justify-content:center;margin-top:18px">'+
+      '<button class="btn btn-primary" onclick="finishLesson('+overall+')">✅ Хичээл дуусгах</button>'+
+      '<button class="btn btn-light" onclick="LP.i=0;renderPlayer()">↺ Эхнээс үзэх</button></div>';
+  if(!hasKey()) return;
+  const fb=$('aiFb'); fb.innerHTML='<div class="ai-message"><span class="loader"></span>AI хувийн дүгнэлт бичиж байна...</div>';
+  try{
+    const r=await ai('A Mongolian student finished an English lesson. Level: '+L.level+', topic: "'+L.topic+'", results: '+
+      JSON.stringify({scores:parts,mistakes:S.mistakes.slice(-6).map(m=>m.wrong+' -> '+m.correct)})+
+      '. Return JSON: {"feedback_mn":"3-4 Mongolian sentences: what went well, what to fix","review_mn":["2-3 Mongolian review points for tomorrow"],"next_topic":"English topic name to study next","ready_for_next_level":true|false}. Only JSON.',{temp:0.6});
+    fb.innerHTML='<div class="ai-message" style="text-align:left"><b>🤖 AI дүгнэлт</b><br>'+esc(r.feedback_mn||'')+
+      ((r.review_mn||[]).length?'<div style="margin-top:10px"><b>🔄 Маргааш давтах:</b><ul style="margin:6px 0 0 18px">'+
+        (r.review_mn||[]).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>':'')+
+      (r.next_topic?'<div style="margin-top:10px">➡️ Дараагийн сэдэв: <b>'+esc(r.next_topic)+'</b></div>':'')+'</div>';
+  }catch(e){ fb.innerHTML=''; }
+}
+function finishLesson(score){
+  const L=LP?LP.L:S.lesson; if(!L) return;
+  if(L.source==='path'){ const p=S.path.find(x=>x.id===L.key); if(p) p.status='done'; }
+  S.completed[L.key]={date:today(),score:score||0};
+  S.stats.lessons++;
+  (L.vocab||[]).forEach(w=>addWord(w.en,w.mn,w.example));
+  bump(L.skill||'grammar',4); bump('reading',2);
+  const st=STAGES[stageIndex(L.stage||curStage().id)];
+  if(st && st.base===S.user.level) S.user.levelPct=Math.round(stageDone(st)/st.topics.length*100);
+  addXp(40); save(); LP=null; syncSoon();
+  toast('Хичээл дууслаа · +40 XP');
+  if(st && stageComplete(st) && (S.user.stage||0)===stageIndex(st.id)){
+    go('curriculum');
+    setTimeout(()=>toast('🏁 '+st.id+' шат дууслаа! Түвшин ахих шалгалт нээгдлээ.'),800);
+  } else go(L.source==='path'?'path':'curriculum');
+}
+
+/* ============ LEVEL-UP TEST ============ */
+let LT=null;
+async function startLevelTest(stId){
+  const i=stageIndex(stId), st=STAGES[i], nxt=STAGES[i+1];
+  go('lesson');
+  const box=$('lessonBox');
+  if(!hasKey()){ box.innerHTML='<div class="card empty">🔑 Шалгалтад API түлхүүр шаардлагатай.</div>'; return; }
+  busy(box,'AI '+st.id+' шатны шалгалт бэлдэж байна...');
+  try{
+    const r=await ai('Create a level-up test for a Mongolian student finishing stage '+st.id+' ('+st.base+'). '+
+      'Topics covered: '+JSON.stringify(st.topics.map(t=>t[0]))+'. Grammar covered: '+JSON.stringify(st.topics.map(t=>t[2]))+'. '+
+      'Write 12 multiple-choice questions mixing grammar, vocabulary and reading, all at '+st.base+' level, from easy to hard. '+
+      'Return JSON: {"questions":[{"q":"","options":["","","",""],"correct":0,"explain_mn":""} x12],"writing_task_mn":"one short Mongolian writing prompt"}. Only JSON.',{temp:0.7});
+    LT={st:st,nxt:nxt,qs:r.questions||[],task:r.writing_task_mn||'',i:0,right:0};
+    drawLevelTest();
+  }catch(e){ aiErr(e); box.innerHTML='<div class="card empty">Шалгалт үүсгэж чадсангүй.</div>'; }
+}
+function drawLevelTest(){
+  const q=LT.qs[LT.i];
+  $('lessonSub').textContent=LT.st.id+' → '+(LT.nxt?LT.nxt.id:'C1') + ' шалгалт';
+  $('lessonBox').innerHTML='<div class="card quiz-card">'+
+    '<div class="qmeta"><span>🏁 Түвшин ахих шалгалт</span><span>'+(LT.i+1)+' / '+LT.qs.length+'</span></div>'+
+    '<div class="progress" style="margin:12px 0"><div class="progress-bar" style="width:'+Math.round(LT.i/LT.qs.length*100)+'%"></div></div>'+
+    '<div class="question">'+esc(q.q)+'</div>'+
+    '<div class="options">'+q.options.map((o,i)=>'<div class="option" onclick="answerLT('+i+')">'+String.fromCharCode(65+i)+'. '+esc(o)+'</div>').join('')+'</div>'+
+    '<p class="muted" style="margin-top:14px">Дараагийн шат нээхэд 80% шаардлагатай.</p></div>';
+}
+function answerLT(i){
+  const q=LT.qs[LT.i];
+  if(i===q.correct) LT.right++;
+  else addMistake(String(q.q).replace('___',q.options[i]),String(q.q).replace('___',q.options[q.correct]),'grammar',q.explain_mn||'');
+  LT.i++;
+  if(LT.i<LT.qs.length) drawLevelTest(); else endLevelTest();
+}
+function endLevelTest(){
+  const pct=Math.round(LT.right/LT.qs.length*100), passed=pct>=80, st=LT.st, nxt=LT.nxt;
+  S.levelTests[st.id]={score:pct,date:today(),passed:passed};
+  if(passed && nxt){
+    S.user.unlocked=Math.max(S.user.unlocked||0,stageIndex(nxt.id));
+    S.user.stage=stageIndex(nxt.id);
+    S.user.level=nxt.base; S.user.levelPct=0;
+    addXp(100);
+  }
+  save(); renderHeader(); syncSoon();
+  $('lessonBox').innerHTML='<div class="card quiz-card level-box"><div class="level">'+pct+'%</div>'+
+    '<h2>'+LT.right+' / '+LT.qs.length+' зөв</h2>'+
+    (passed
+      ? '<p class="muted" style="margin:14px 0">🎉 Тэнцлээ! '+(nxt?('<b>'+nxt.id+'</b> шат нээгдлээ. +100 XP'):'Та C1 хүртэл бүх шатыг дуусгалаа!')+'</p>'
+      : '<p class="muted" style="margin:14px 0">80%-д хүрсэнгүй. Алдаа дээрээ ажиллаад дахин өгөөрэй.</p>')+
+    (LT.task?'<div class="ai-message" style="text-align:left"><b>✍️ Нэмэлт бичих даалгавар:</b><br>'+esc(LT.task)+'</div>':'')+
+    '<div class="row" style="justify-content:center;margin-top:16px">'+
+      '<button class="btn btn-primary" onclick="go(\'curriculum\')">🗂️ Хөтөлбөр</button>'+
+      (passed?'':'<button class="btn btn-light" onclick="go(\'mistakes\')">⚠️ Алдаагаа харах</button>'+
+        '<button class="btn btn-light" onclick="startLevelTest(\''+st.id+'\')">↻ Дахин өгөх</button>')+
+    '</div></div>';
+  LT=null;
+}
+
+/* ============ QUIZ ============ */
+let Q=null;
+async function genQuiz(mode){
+  const box=$('quizBox');
+  if(!hasKey()){
+    if(mode==='words'&&S.words.length>=4) return startQuiz(localWordQuiz());
+    toast('AI дасгал үүсгэхийн тулд API түлхүүр хэрэгтэй'); return go('settings');
+  }
+  busy(box,'AI дасгал үүсгэж байна...');
+  let ctx='';
+  if(mode==='weak') ctx='Focus on the weak skills: '+JSON.stringify(S.placement.weak||['grammar'])+' and the current path topic: '+((S.path.find(p=>p.status!=='done')||{}).topic||'general');
+  if(mode==='mistakes') ctx='Base every question on these repeated mistakes: '+JSON.stringify(S.mistakes.slice(-10).map(m=>m.wrong+' -> '+m.correct));
+  if(mode==='words') ctx='Use these vocabulary words: '+JSON.stringify(S.words.slice(-14).map(w=>w.en));
+  try{
+    const r=await ai('Create 5 multiple-choice English questions for a Mongolian '+(S.user.level||'A1')+' student. '+ctx+
+      '. Return JSON array: [{"q":"question with ___","options":["a","b","c","d"],"correct":0,"explain_mn":"Mongolian explanation","skill":"grammar|vocabulary|reading"}]. Only JSON.',{temp:0.8});
+    startQuiz(r);
+  }catch(e){ aiErr(e); box.innerHTML='<div class="card quiz-card empty">Үүсгэж чадсангүй.</div>'; }
+}
+function localWordQuiz(){
+  const ws=S.words.slice().sort(()=>Math.random()-0.5).slice(0,5);
+  return ws.map(w=>{
+    const others=S.words.filter(x=>x.en!==w.en).sort(()=>Math.random()-0.5).slice(0,3).map(x=>x.mn);
+    const opts=[w.mn].concat(others).sort(()=>Math.random()-0.5);
+    return {q:'"'+w.en+'" гэдэг нь юу гэсэн үг вэ?',options:opts,correct:opts.indexOf(w.mn),explain_mn:w.en+' = '+w.mn,skill:'vocabulary'};
+  });
+}
+function startQuiz(qs){
+  if(!qs||!qs.length){ toast('Асуулт алга'); return; }
+  Q={qs:qs,i:0,right:0}; go('quiz'); drawQuiz();
+}
+function drawQuiz(){
+  const q=Q.qs[Q.i];
+  $('quizBox').innerHTML='<div class="card quiz-card">'+
+    '<div class="qmeta"><span>Асуулт '+(Q.i+1)+' / '+Q.qs.length+'</span><span class="chip">'+esc(SKILLS[q.skill]||'Дасгал')+'</span></div>'+
+    '<div class="progress" style="margin:12px 0"><div class="progress-bar" style="width:'+Math.round(Q.i/Q.qs.length*100)+'%"></div></div>'+
+    '<div class="question">'+esc(q.q)+'</div>'+
+    '<div class="options" id="qOpts">'+q.options.map((o,i)=>'<div class="option" onclick="answerQuiz(this,'+i+')">'+String.fromCharCode(65+i)+'. '+esc(o)+'</div>').join('')+'</div>'+
+    '<div id="quizResult" style="margin-top:16px"></div></div>';
+}
+function answerQuiz(el,i){
+  const q=Q.qs[Q.i], ok=(i===q.correct);
+  document.querySelectorAll('#qOpts .option').forEach((o,idx)=>{
+    o.style.pointerEvents='none';
+    if(idx===q.correct) o.classList.add('correct');
+  });
+  if(!ok){
+    el.classList.add('wrong');
+    addMistake(q.q.replace('___',q.options[i]),q.q.replace('___',q.options[q.correct]),q.skill||'grammar',q.explain_mn||'');
+  }else{ addXp(10); bump(q.skill||'grammar',2); }
+  S.stats.qTotal++; if(ok){ S.stats.qRight++; Q.right++; } save();
+  $('quizResult').innerHTML='<div class="ai-message">'+(ok?'🎉 Зөв! +10 XP':'❌ Буруу. Зөв хариу: <b>'+esc(q.options[q.correct])+'</b>')+
+    (q.explain_mn?'<br>'+esc(q.explain_mn):'')+'</div>'+
+    '<button class="btn btn-primary" style="margin-top:12px" onclick="nextQuiz()">'+(Q.i+1<Q.qs.length?'Дараагийн →':'Дуусгах')+'</button>';
+}
+function nextQuiz(){
+  Q.i++;
+  if(Q.i<Q.qs.length) return drawQuiz();
+  const pct=Math.round(Q.right/Q.qs.length*100);
+  $('quizBox').innerHTML='<div class="card quiz-card level-box"><div class="level">'+pct+'%</div>'+
+    '<h2>'+Q.right+' / '+Q.qs.length+' зөв</h2>'+
+    '<p class="muted" style="margin:12px 0">'+(pct>=80?'Маш сайн! 🎉':pct>=50?'Сайн байна, давтлага хэрэгтэй.':'Энэ сэдвийг дахин үзье.')+'</p>'+
+    '<div class="row" style="justify-content:center"><button class="btn btn-primary" onclick="genQuiz(\'weak\')">Дахин дасгал</button>'+
+    '<button class="btn btn-light" onclick="go(\'mistakes\')">Алдаагаа харах</button></div></div>';
+  Q=null; renderHeader();
+}
+
+/* ============ SPACED REPETITION (SM-2) ============ */
+function addWord(en,mn,ex){
+  if(!en) return false;
+  en=String(en).trim();
+  if(S.words.some(w=>w.en.toLowerCase()===en.toLowerCase())) return false;
+  S.words.push({id:'w'+Date.now()+Math.random().toString(36).slice(2,6),en:en,mn:mn||'',ex:ex||'',
+    ef:2.5,interval:0,reps:0,lapses:0,due:Date.now(),added:today()});
+  return true;
+}
+function dueWords(){ const n=Date.now(); return S.words.filter(w=>w.due<=n); }
+function sm2(w,q){
+  if(q<3){ w.reps=0; w.interval=1; w.lapses++; }
+  else{
+    w.reps++;
+    w.interval = w.reps===1 ? 1 : w.reps===2 ? 6 : Math.round(w.interval*w.ef);
+    w.ef = Math.max(1.3, w.ef + (0.1-(5-q)*(0.08+(5-q)*0.02)));
+  }
+  w.due = Date.now() + w.interval*DAY;
+  w.last = today();
+}
+let R=null;
+function wordTab(which,el){
+  document.querySelectorAll('#words .tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  $('reviewBox').style.display = which==='review'?'block':'none';
+  $('allWordsBox').style.display = which==='all'?'block':'none';
+  if(which==='all') renderAllWords();
+}
+function startReview(){
+  const due=dueWords();
+  if(!due.length){ toast('Давтах үг алга. Маргааш дахин ирээрэй 👍'); return renderReview(); }
+  R={queue:due.slice().sort((a,b)=>a.due-b.due),i:0,shown:false,total:due.length};
+  wordTab('review',document.querySelector('#words .tab'));
+  drawReview();
+}
+function renderReview(){
+  if(R) return drawReview();
+  const due=dueWords().length, box=$('reviewBox');
+  if(!S.words.length){
+    box.innerHTML='<div class="card empty">Үгийн сан хоосон байна.<br>Хичээл үзэхэд шинэ үгс автоматаар нэмэгдэнэ.<br>'+
+      '<button class="btn btn-primary" style="margin-top:14px" onclick="aiAddWords()">✨ AI-аар үг нэмэх</button></div>';
+    return;
+  }
+  const soon=S.words.filter(w=>w.due>Date.now()).sort((a,b)=>a.due-b.due)[0];
+  box.innerHTML='<div class="card srs-card">'+
+    (due?'<h2>⏰ '+due+' үг давтах цаг болсон</h2><p class="muted" style="margin:10px 0 18px">Интервалт давталтын систем мартах мөчид тань үгийг эргүүлж гаргана.</p>'+
+        '<button class="btn btn-primary" onclick="startReview()">Давтлага эхлүүлэх</button>'
+      :'<h2>✅ Өнөөдрийн давталт дууссан</h2><p class="muted" style="margin:10px 0">'+
+        (soon?'Дараагийн давталт: '+new Date(soon.due).toLocaleDateString('mn-MN'):'')+'</p>')+
+    '</div>';
+}
+function drawReview(){
+  const w=R.queue[R.i];
+  if(!w) return finishReview();
+  const back='<div class="srs-mn">'+esc(w.mn)+'</div>'+(w.ex?'<div class="srs-ex">'+esc(w.ex)+'</div>':'')+
+    '<div class="srs-grade">'+
+      '<button class="btn g0" onclick="grade(0)">Мартсан<small>1 хоног</small></button>'+
+      '<button class="btn g3" onclick="grade(3)">Хэцүү<small>богино</small></button>'+
+      '<button class="btn g4" onclick="grade(4)">Санасан<small>дунд</small></button>'+
+      '<button class="btn g5" onclick="grade(5)">Амархан<small>урт</small></button>'+
+    '</div>';
+  $('reviewBox').innerHTML='<div class="card srs-card">'+
+    '<div class="qmeta"><span>'+(R.i+1)+' / '+R.total+'</span><span class="chip gray">давталт '+w.reps+'</span></div>'+
+    '<div class="srs-en">'+esc(w.en)+'</div>'+
+    '<button class="btn btn-light btn-sm" data-en="'+esc(w.en)+'" onclick="speak(this.dataset.en)">🔊 Сонсох</button>'+
+    '<div style="margin-top:18px">'+(R.shown?back:'<button class="btn btn-primary" onclick="R.shown=true;drawReview()">Хариуг харах</button>')+'</div>'+
+    '</div>';
+}
+function grade(q){
+  const w=R.queue[R.i];
+  sm2(w,q);
+  S.stats.reviews++;
+  bump('vocabulary', q>=4?1.5:0.5);
+  if(q>=4) addXp(5);
+  R.i++; R.shown=false; save();
+  drawReview(); renderHeader();
+}
+function finishReview(){
+  const n=R.total; R=null; markDay(); save();
+  $('reviewBox').innerHTML='<div class="card srs-card"><div class="level">🎉</div><h2>'+n+' үг давтлаа</h2>'+
+    '<p class="muted" style="margin:12px 0">Дараагийн давталт үг тус бүрийн хуваарийн дагуу автоматаар гарч ирнэ.</p>'+
+    '<button class="btn btn-primary" onclick="go(\'quiz\');genQuiz(\'words\')">📝 Үгээр дасгал хийх</button></div>';
+  renderHeader(); renderAllWords();
+}
+function renderAllWords(){
+  const box=$('allWordsBox');
+  if(!S.words.length){ box.innerHTML='<div class="card empty">Үг алга.</div>'; return; }
+  const sorted=S.words.slice().sort((a,b)=>a.due-b.due);
+  box.innerHTML='<div class="word-list">'+sorted.map(w=>{
+    const d=w.due<=Date.now()?'<span class="chip red">Өнөөдөр</span>':'<span class="chip gray">'+new Date(w.due).toLocaleDateString('mn-MN')+'</span>';
+    return '<div class="wl"><div class="row" style="justify-content:space-between"><b>'+esc(w.en)+'</b>'+
+      '<button class="btn btn-light btn-sm" data-en="'+esc(w.en)+'" onclick="speak(this.dataset.en)">🔊</button></div>'+
+      '<div class="muted">'+esc(w.mn)+'</div>'+
+      (w.ex?'<div class="muted" style="font-size:12px;margin-top:5px;font-style:italic">'+esc(w.ex)+'</div>':'')+
+      '<span class="due">Давталт '+w.reps+' · '+d+'</span>'+
+      '<button class="btn btn-red btn-sm" style="margin-top:8px" onclick="delWord(\''+w.id+'\')">Устгах</button></div>';
+  }).join('')+'</div>';
+}
+function delWord(id){ S.words=S.words.filter(w=>w.id!==id); save(); renderAllWords(); renderHeader(); }
+async function aiAddWords(){
+  if(!hasKey()){ toast('API түлхүүр хэрэгтэй'); return go('settings'); }
+  toast('AI үг сонгож байна...');
+  try{
+    const r=await ai('Give 10 useful English words for a Mongolian '+(S.user.level||'A1')+' student studying "'+
+      ((S.path.find(p=>p.status!=='done')||{}).topic||'everyday English')+'". Avoid these: '+JSON.stringify(S.words.slice(-30).map(w=>w.en))+
+      '. Return JSON array: [{"en":"word","mn":"Mongolian meaning","example":"short sentence"}]. Only JSON.',{temp:0.9});
+    let n=0; (r||[]).forEach(w=>{ if(addWord(w.en,w.mn,w.example)) n++; });
+    save(); renderAllWords(); renderReview(); renderHeader();
+    toast(n+' шинэ үг нэмэгдлээ');
+  }catch(e){ aiErr(e); }
+}
+
+/* ============ AI SPEAKING ============ */
+const TOPIC_TXT={free:'anything the student likes',introduce:'introducing yourself',daily:'daily routine',
+  school:'school and lessons',family:'family',shopping:'shopping and prices',travel:'travel',interview:'a simple job interview'};
+function newChat(){
+  S.chat=[]; save();
+  const t=$('chatTopic').value;
+  const greet = t==='free' ? "Hi! I'm your English friend. How are you today?" :
+    'Hi! Let\u2019s talk about '+TOPIC_TXT[t]+'. Are you ready?';
+  S.chat.push({role:'ai',text:greet}); save(); drawChat(); speak(greet);
+}
+function drawChat(){
+  const c=$('chat');
+  c.innerHTML=S.chat.map(m=>{
+    if(m.role==='user') return '<div class="message user">'+esc(m.text)+'</div>'+
+      (m.correction?'<div class="correction">✏️ <b>'+esc(m.correction.correct)+'</b> — '+esc(m.correction.why_mn||'')+'</div>':'');
+    return '<div class="message ai" data-en="'+esc(m.text)+'" onclick="speak(this.dataset.en)">'+esc(m.text)+'</div>';
+  }).join('');
+  c.scrollTop=c.scrollHeight;
+}
+async function sendMessage(txt){
+  const input=$('chatInput');
+  const text=(typeof txt==='string'?txt:input.value).trim();
+  if(!text) return;
+  input.value='';
+  S.chat.push({role:'user',text:text}); drawChat(); save();
+  if(!hasKey()){ toast('API түлхүүр хэрэгтэй'); return go('settings'); }
+  const c=$('chat');
+  const wait=document.createElement('div'); wait.className='message ai'; wait.innerHTML='<span class="loader"></span>...';
+  c.appendChild(wait); c.scrollTop=c.scrollHeight;
+  try{
+    const hist=S.chat.slice(-12).map(m=>(m.role==='user'?'Student: ':'You: ')+m.text).join('\n');
+    const r=await ai('Conversation so far:\n'+hist+
+      '\n\nReply as a friendly English conversation partner for a Mongolian '+(S.user.level||'A1')+
+      ' student. Topic: '+TOPIC_TXT[$('chatTopic').value]+'. Keep your reply to 1-2 short sentences at their level and always end with a question. '+
+      'If the student made a clear English mistake in their last message, add a correction. '+
+      'Return JSON: {"reply":"English reply","correction":{"wrong":"...","correct":"...","why_mn":"short Mongolian reason"} or null}. Only JSON.',
+      {temp:0.85});
+    wait.remove();
+    const last=S.chat[S.chat.length-1];
+    if(r.correction && r.correction.correct){
+      last.correction=r.correction;
+      addMistake(r.correction.wrong||text,r.correction.correct,'speaking',r.correction.why_mn||'');
+    }
+    S.chat.push({role:'ai',text:r.reply||'...'});
+    bump('speaking',1.5); addXp(5); save(); drawChat(); speak(r.reply);
+  }catch(e){ wait.remove(); aiErr(e); }
+}
+let chatRec=null;
+function micChat(){
+  const btn=$('chatMic');
+  if(chatRec){ chatRec.stop(); chatRec=null; btn.classList.remove('rec'); return; }
+  btn.classList.add('rec');
+  chatRec=listen(res=>{ chatRec=null; btn.classList.remove('rec'); sendMessage(res.text); },
+                 ()=>{ chatRec=null; btn.classList.remove('rec'); });
+}
+
+/* ============ PRONUNCIATION SCORING ============ */
+const PRON_BANK={
+ A1:["I wake up at seven o'clock.","My name is Bat and I am a student.","I go to school every morning.","She has breakfast with her family.","This is my favourite book."],
+ A2:["Yesterday I went to the market with my mother.","I am going to visit my grandparents next week.","The weather is colder than it was yesterday.","Could you tell me where the bus station is?"],
+ B1:["I have never travelled abroad, but I would love to.","If it rains tomorrow, we will stay at home.","She has been studying English for three years.","Learning a language takes patience and practice."],
+ B2:["The bridge was built more than a hundred years ago.","Although he was exhausted, he continued working.","We should consider the environmental impact of our choices.","He said he had already finished the report."],
+ C1:["Rarely have I encountered such a compelling argument.","The policy, albeit controversial, achieved its main objective.","Had we known earlier, we would have taken a different approach."]
+};
+let pronIdx=0;
+function pronList(){
+  const lvl=S.user.level||'A1';
+  return (S.pronBank && S.pronBank.length) ? S.pronBank : (PRON_BANK[lvl]||PRON_BANK.A1);
+}
+function renderPron(){
+  const list=pronList();
+  pronIdx=pronIdx%list.length;
+  $('pronLevel').textContent=(S.user.level||'A1')+' түвшин';
+  $('pronIdx').textContent=(pronIdx+1)+' / '+list.length;
+  $('pronTarget').textContent=list[pronIdx];
+  $('pronResult').innerHTML='';
+  renderPronHistory();
+}
+function nextPronTarget(){ pronIdx=(pronIdx+1)%pronList().length; renderPron(); }
+async function aiPronSentences(){
+  if(!hasKey()){ toast('API түлхүүр хэрэгтэй'); return go('settings'); }
+  toast('AI өгүүлбэр бэлдэж байна...');
+  try{
+    const weak=S.pron.slice(-6).flatMap(p=>p.badWords||[]);
+    const r=await ai('Give 6 English sentences (8-14 words) for pronunciation practice by a Mongolian '+(S.user.level||'A1')+
+      ' student. Mongolian learners struggle with th, w/v, f/p, r/l, final consonant clusters and long vowels. '+
+      (weak.length?'The student recently mispronounced: '+JSON.stringify(weak.slice(0,10))+'. ':'')+
+      'Return JSON array of plain strings only.',{temp:0.9});
+    if(Array.isArray(r)&&r.length){ S.pronBank=r.filter(x=>typeof x==='string'); pronIdx=0; save(); renderPron(); toast('Шинэ өгүүлбэрүүд бэлэн'); }
+  }catch(e){ aiErr(e); }
+}
+const N1=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+const N10=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+function n2w(v){
+  let n=parseInt(v,10); if(isNaN(n)) return '';
+  if(n<20) return N1[n];
+  if(n<100) return N10[Math.floor(n/10)]+(n%10?' '+N1[n%10]:'');
+  if(n<1000) return N1[Math.floor(n/100)]+' hundred'+(n%100?' '+n2w(n%100):'');
+  if(n<=2100){ const a=Math.floor(n/100), b=n%100;
+    if(b===0) return n2w(a)+' hundred';
+    return n2w(a)+' '+(b<10?'oh '+N1[b]:n2w(b)); }
+  return String(n);
+}
+function norm(s){
+  return String(s).toLowerCase()
+    .replace(/(\d+)/g,m=>' '+n2w(m)+' ')
+    .replace(/[^a-z'\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+function lev(a,b){
+  const m=a.length,n=b.length; if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,j)=>j),cur=new Array(n+1);
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++) cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    [prev,cur]=[cur,prev];
+  }
+  return prev[n];
+}
+function sim(a,b){ const m=Math.max(a.length,b.length); return m?1-lev(a,b)/m:1; }
+function alignScore(target,said){
+  const T=norm(target).split(' ').filter(Boolean), Sd=norm(said).split(' ').filter(Boolean);
+  const n=T.length,m=Sd.length;
+  const d=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  const bt=Array.from({length:n+1},()=>new Array(m+1).fill(''));
+  for(let i=1;i<=n;i++){ d[i][0]=i; bt[i][0]='d'; }
+  for(let j=1;j<=m;j++){ d[0][j]=j; bt[0][j]='i'; }
+  for(let i=1;i<=n;i++) for(let j=1;j<=m;j++){
+    const cost=1-sim(T[i-1],Sd[j-1]);
+    const opts=[[d[i-1][j-1]+cost,'s'],[d[i-1][j]+1,'d'],[d[i][j-1]+1,'i']].sort((a,b)=>a[0]-b[0]);
+    d[i][j]=opts[0][0]; bt[i][j]=opts[0][1];
+  }
+  const scores=new Array(n).fill(0);
+  let i=n,j=m;
+  while(i>0||j>0){
+    const op=bt[i][j]||(i>0?'d':'i');
+    if(op==='s'){ scores[i-1]=sim(T[i-1],Sd[j-1]); i--; j--; }
+    else if(op==='d'){ scores[i-1]=0; i--; }
+    else{ j--; }
+  }
+  return {words:T,scores:scores};
+}
+let pronRec=null;
+function micPron(){
+  const btn=$('pronMic');
+  if(pronRec){ pronRec.stop(); pronRec=null; btn.classList.remove('rec'); return; }
+  btn.classList.add('rec'); $('pronHint').textContent='Сонсож байна... одоо уншаарай';
+  pronRec=listen(res=>{ pronRec=null; btn.classList.remove('rec'); $('pronHint').textContent='Микрофон дарж уншаарай'; scorePron(res); },
+                 ()=>{ pronRec=null; btn.classList.remove('rec'); $('pronHint').textContent='Микрофон дарж уншаарай'; });
+}
+function scorePron(res){
+  const target=$('pronTarget').textContent;
+  const a=alignScore(target,res.text);
+  const acc=a.scores.length? a.scores.reduce((x,y)=>x+y,0)/a.scores.length : 0;
+  const secs=Math.max(0.5,res.ms/1000), wpm=a.words.length/secs*60;
+  const fluency = wpm<60 ? 0.9 : wpm>200 ? 0.92 : 1;
+  const score=Math.round(Math.min(100,acc*100*fluency));
+  const bad=a.words.filter((w,i)=>a.scores[i]<0.7);
+  const html='<div class="score-ring" style="background:'+(score>=80?'#16a34a':score>=60?'#f59e0b':'#dc2626')+';margin-top:20px">'+
+      score+'<small>оноо</small></div>'+
+    '<div style="text-align:center;margin-top:18px;font-size:20px;line-height:2.1">'+
+      a.words.map((w,i)=>'<span class="pw '+(a.scores[i]>=0.85?'ok':a.scores[i]>=0.6?'mid':'bad')+'">'+esc(w)+'</span>').join(' ')+'</div>'+
+    '<p class="muted" style="text-align:center;margin-top:14px">Танигдсан: "'+esc(res.text)+'"<br>Хурд: '+Math.round(wpm)+' үг/мин</p>'+
+    '<div class="row" style="justify-content:center;margin-top:14px">'+
+      '<button class="btn btn-light" onclick="speak(document.getElementById(\'pronTarget\').innerText,0.7)">🐢 Удаанаар сонсох</button>'+
+      '<button class="btn btn-light" onclick="micPron()">🎤 Дахин унших</button>'+
+      (bad.length?'<button class="btn btn-primary" onclick="pronTips()">✨ AI зөвлөгөө</button>':'')+
+      '<button class="btn btn-light" onclick="nextPronTarget()">Дараагийн →</button>'+
+    '</div><div id="pronTipBox"></div>';
+  $('pronResult').innerHTML=html;
+  S.pron.push({date:today(),text:target,score:score,said:res.text,badWords:bad});
+  S.pron=S.pron.slice(-40);
+  bump('pronunciation',score>=80?2:score>=60?1:0.3);
+  bump('speaking',0.5);
+  addXp(score>=80?10:5); save();
+  renderPronHistory(); renderHeader();
+}
+async function pronTips(){
+  const last=S.pron[S.pron.length-1]; const box=$('pronTipBox');
+  if(!hasKey()){ toast('API түлхүүр хэрэгтэй'); return; }
+  box.innerHTML='<div class="ai-message"><span class="loader"></span>AI зөвлөгөө бэлдэж байна...</div>';
+  try{
+    const r=await ai('A Mongolian student read: "'+last.text+'". The speech recogniser heard: "'+last.said+
+      '". These words scored low: '+JSON.stringify(last.badWords)+
+      '. Give pronunciation coaching in Mongolian. Return JSON: {"tips":[{"word":"the word","ipa":"/.../","tip_mn":"how to move the mouth/tongue, in Mongolian, 1-2 sentences"}],"summary_mn":"one encouraging sentence"}. Only JSON.',{temp:0.6});
+    box.innerHTML='<div class="ai-message"><strong>🎧 Дуудлагын зөвлөгөө</strong><br>'+
+      (r.tips||[]).map(t=>'<div style="margin-top:9px"><b>'+esc(t.word)+'</b> '+esc(t.ipa||'')+
+        ' <button class="btn btn-light btn-sm" data-en="'+esc(t.word)+'" onclick="speak(this.dataset.en,0.6)">🔊</button><br>'+esc(t.tip_mn)+'</div>').join('')+
+      (r.summary_mn?'<div style="margin-top:10px">'+esc(r.summary_mn)+'</div>':'')+'</div>';
+  }catch(e){ aiErr(e); box.innerHTML=''; }
+}
+function renderPronHistory(){
+  const box=$('pronHistory');
+  if(!S.pron.length){ box.innerHTML='<p class="muted">Одоохондоо бичлэг алга.</p>'; return; }
+  box.innerHTML=S.pron.slice(-8).reverse().map(p=>
+    '<div class="row" style="justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)">'+
+    '<span style="flex:1;min-width:180px">'+esc(p.text)+'</span>'+
+    '<span class="chip '+(p.score>=80?'green':p.score>=60?'yellow':'red')+'">'+p.score+'%</span></div>').join('');
+}
+
+/* ============ MISTAKES ============ */
+function addMistake(wrong,correct,type,why){
+  if(!wrong||!correct) return;
+  const key=(wrong+'|'+correct).toLowerCase();
+  const ex=S.mistakes.find(m=>(m.wrong+'|'+m.correct).toLowerCase()===key);
+  if(ex){ ex.count++; ex.date=today(); }
+  else S.mistakes.push({wrong:wrong,correct:correct,type:type||'grammar',why:why||'',count:1,date:today()});
+  S.mistakes=S.mistakes.slice(-120);
+  save();
+}
+function renderMistakes(){
+  const box=$('mistakeBox');
+  if(!S.mistakes.length){ box.innerHTML='<div class="empty">Алдаа бүртгэгдээгүй байна. 👍<br>Бичих даалгавар, дасгал, AI ярианаас алдаа автоматаар энд цугларна.</div>'; return; }
+  const sorted=S.mistakes.slice().sort((a,b)=>b.count-a.count||(a.date<b.date?1:-1));
+  box.innerHTML=sorted.map(m=>'<div class="mistake"><div style="flex:1">'+
+    '<div class="bad">❌ '+esc(m.wrong)+'</div><div class="good">✅ '+esc(m.correct)+'</div>'+
+    (m.why?'<div class="muted" style="font-size:13px;margin-top:4px">'+esc(m.why)+'</div>':'')+'</div>'+
+    '<div style="text-align:right"><span class="chip '+(m.count>2?'red':'gray')+'">'+esc(SKILLS[m.type]||m.type)+' ×'+m.count+'</span>'+
+    '<div><button class="btn btn-light btn-sm" style="margin-top:8px" data-en="'+esc(m.correct)+'" onclick="speak(this.dataset.en)">🔊</button></div></div></div>').join('');
+}
+function clearMistakes(){ if(confirm('Бүх алдааг устгах уу?')){ S.mistakes=[]; save(); renderMistakes(); } }
+
+/* ============ PROGRESS ============ */
+function renderProgress(){
+  const lvl=S.user.level;
+  $('pLevel').textContent=lvl||'—';
+  $('pLevelName').textContent=lvl?LEVEL_NAME[lvl]:'Түвшин тогтоогоогүй';
+  $('cefrBar').innerHTML=LEVELS.map(l=>'<div class="'+(l===lvl?'on':'')+'">'+l+'</div>').join('');
+  const nxt=LEVELS[LEVELS.indexOf(lvl)+1];
+  $('pLevelTxt').textContent = lvl
+    ? 'Та '+lvl+' түвшний '+(S.user.levelPct||0)+'%-ийг эзэмшсэн.'+(nxt?' Дараагийн түвшин: '+nxt:' Хамгийн дээд түвшин!')
+    : 'Түвшин тогтоох тестээ өгөөрэй.';
+  $('pBar').style.width=(S.user.levelPct||0)+'%';
+  const stp=curStage();
+  $('cefrBar').insertAdjacentHTML('afterend','<div class="row" style="justify-content:center;margin-top:10px">'+
+    '<span class="chip">Идэвхтэй шат: '+stp.id+'</span>'+
+    '<span class="chip gray">'+stageDone(stp)+' / '+stp.topics.length+' хичээл</span>'+
+    '<span class="chip gray">Нээгдсэн: '+STAGES[S.user.unlocked||0].id+'</span></div>');
+  $('pSkills').innerHTML=Object.keys(SKILLS).map(k=>{
+    const v=Math.round(S.skills[k]);
+    return '<div class="skill"><div class="skill-top"><span>'+SKILLS[k]+'</span><strong>'+v+'%</strong></div>'+
+      '<div class="progress"><div class="progress-bar" style="width:'+v+'%"></div></div></div>';
+  }).join('')+
+  '<div class="row" style="margin-top:14px"><span class="chip">Хичээл: '+S.stats.lessons+'</span>'+
+  '<span class="chip">Дасгал: '+S.stats.qRight+'/'+S.stats.qTotal+'</span>'+
+  '<span class="chip">Давталт: '+S.stats.reviews+'</span></div>';
+  const nw=S.words.filter(w=>w.reps===0).length, learn=S.words.filter(w=>w.reps>0&&w.reps<3).length,
+        known=S.words.filter(w=>w.reps>=3).length;
+  $('pWords').innerHTML='<div class="row" style="margin-bottom:12px"><span class="chip gray">Шинэ '+nw+'</span>'+
+    '<span class="chip yellow">Сурч буй '+learn+'</span><span class="chip green">Эзэмшсэн '+known+'</span></div>'+
+    '<div class="progress" style="height:14px"><div class="progress-bar" style="width:'+(S.words.length?Math.round(known/S.words.length*100):0)+'%"></div></div>'+
+    '<p class="muted" style="margin-top:10px">Нийт '+S.words.length+' үг · өнөөдөр давтах '+dueWords().length+'</p>'+
+    (S.pron.length?'<p class="muted" style="margin-top:8px">Дуудлагын дундаж: '+Math.round(S.pron.reduce((a,b)=>a+b.score,0)/S.pron.length)+'%</p>':'');
+}
+
+/* ============ ХИЧЭЭЛИЙН КОНТЕНТ ПАКЕТ ============ */
+function allLessonMetas(){
+  const out=[];
+  STAGES.forEach(st=>st.topics.forEach((t,k)=>out.push({key:'L_'+st.id+'_'+k,stage:st.id,level:st.base,
+    topic:t[0],topic_mn:t[1],focus:t[2],skill:t[3]})));
+  return out;
+}
+function bankStats(){
+  const all=allLessonMetas();
+  const ready=all.filter(m=>S.bank[m.key]).length;
+  const kb=Math.round(JSON.stringify(S.bank||{}).length/1024);
+  return {total:all.length,ready:ready,kb:kb};
+}
+let PG=null;
+function stopPregen(){ if(PG) PG.stop=true; }
+async function pregen(scope){
+  if(!hasKey()){ toast('API түлхүүр хэрэгтэй'); return; }
+  const st=curStage();
+  let list=allLessonMetas().filter(m=>!S.bank[m.key]);
+  if(scope==='stage') list=list.filter(m=>m.stage===st.id);
+  if(!list.length){ toast('Энэ хэсгийн хичээлүүд аль хэдийн бэлэн байна'); return renderPack(); }
+  if(scope==='all' && !confirm(list.length+' хичээлийг AI-аар үүсгэнэ. Хэдэн минут үргэлжилнэ. Үргэлжлүүлэх үү?')) return;
+  PG={i:0,n:list.length,ok:0,fail:0,stop:false};
+  for(const m of list){
+    if(PG.stop) break;
+    renderPack();
+    try{ S.bank[m.key]=await generateLessonContent(m); PG.ok++; save(); }
+    catch(e){ PG.fail++; if(String(e.message)==='NO_KEY'){ break; } }
+    PG.i++;
+    await new Promise(r=>setTimeout(r,900));
+  }
+  const done=PG; PG=null; save(); renderPack();
+  toast('Бэлдсэн: '+done.ok+' · алдаа: '+done.fail);
+}
+function renderPack(){
+  const box=$('packBox'); if(!box) return;
+  const b=bankStats(), st=curStage();
+  const stReady=st.topics.filter((t,k)=>S.bank['L_'+st.id+'_'+k]).length;
+  box.innerHTML=
+    '<div class="progress" style="height:12px"><div class="progress-bar" style="width:'+Math.round(b.ready/b.total*100)+'%"></div></div>'+
+    '<p class="muted" style="margin:10px 0">Бэлэн: <b>'+b.ready+' / '+b.total+'</b> хичээл ('+b.kb+' KB) · '+st.id+' шат: '+stReady+'/'+st.topics.length+'</p>'+
+    (PG
+      ? '<div class="row"><span class="loader"></span><span>Үүсгэж байна: '+(PG.i+1)+' / '+PG.n+' (ok '+PG.ok+', алдаа '+PG.fail+')</span>'+
+        '<button class="btn btn-red btn-sm" onclick="stopPregen()">Зогсоох</button></div>'
+      : '<div class="row">'+
+        '<button class="btn btn-primary btn-sm" onclick="pregen(\'stage\')">⚡ '+st.id+' шатыг бэлдэх</button>'+
+        '<button class="btn btn-light btn-sm" onclick="pregen(\'all\')">📚 Бүх '+b.total+' хичээл</button>'+
+        '<button class="btn btn-light btn-sm" onclick="exportPack()">⬇️ Пакет экспорт</button>'+
+        '<button class="btn btn-light btn-sm" onclick="document.getElementById(\'packFile\').click()">⬆️ Пакет импорт</button>'+
+        (b.ready?'<button class="btn btn-red btn-sm" onclick="clearPack()">🗑 Цэвэрлэх</button>':'')+
+        '</div>');
+}
+function exportPack(){
+  const b=bankStats();
+  if(!b.ready){ toast('Экспортлох хичээл алга'); return; }
+  const lessons={};
+  Object.keys(S.bank).forEach(k=>{ if(k.indexOf('L_')===0) lessons[k]=S.bank[k]; });
+  const pack={type:'easyenglish-pack',v:1,created:today(),model:S.api.model,count:Object.keys(lessons).length,lessons:lessons};
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(pack)],{type:'application/json'}));
+  a.download='easyenglish_pack_'+today()+'.json'; a.click();
+  toast(pack.count+' хичээл экспортлолоо');
+}
+function importPack(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      const lessons=d.lessons||(d.type?null:d);
+      if(!lessons||typeof lessons!=='object') throw new Error('bad');
+      let n=0; Object.keys(lessons).forEach(k=>{ if(k.indexOf('L_')===0 && lessons[k] && lessons[k].vocab){ S.bank[k]=lessons[k]; n++; } });
+      save(); renderPack(); toast(n+' хичээл импортлогдлоо');
+    }catch(e){ toast('Пакет файл буруу байна'); }
+  };
+  r.readAsText(f); ev.target.value='';
+}
+function clearPack(){
+  if(!confirm('Хадгалсан бүх хичээлийн контентыг устгах уу? (Ахиц, үгийн сан хэвээр үлдэнэ)')) return;
+  S.bank={}; save(); renderPack(); toast('Цэвэрлэлээ');
+}
+
+/* ============ ӨГӨГДӨЛ ХАДГАЛАЛТ (GitHub Pages / Gist / Endpoint) ============ */
+const PROGRESS_KEYS=['user','skills','placement','completed','levelTests','words','mistakes','pron','pronBank','stats','path','rec','chat'];
+
+/* --- 2.1 репод байрлах хичээлийн пакетыг автоматаар ачаалах --- */
+async function loadRepoPack(silent){
+  try{
+    const r=await fetch('pack.json',{cache:'no-store'});
+    if(!r.ok) throw new Error('no pack');
+    const d=await r.json();
+    const lessons=d.lessons||d;
+    let n=0;
+    Object.keys(lessons).forEach(k=>{ if(k.indexOf('L_')===0 && lessons[k] && lessons[k].vocab && !S.bank[k]){ S.bank[k]=lessons[k]; n++; } });
+    if(n){ S.sync.packLoaded=today(); save(); if(!silent) renderPack(); toast('Репогоос '+n+' хичээл ачааллаа'); }
+    else if(!silent) toast('Шинэ хичээл алга (бүгд бэлэн)');
+    return n;
+  }catch(e){ if(!silent) toast('pack.json олдсонгүй — репо дотроо index.html-ийн хажууд байрлуулна уу'); return 0; }
+}
+
+/* --- 2.2 ахицын синк --- */
+function syncPayload(){
+  const out={app:'easyenglish',v:1,updated:new Date().toISOString(),
+    code:S.sync.code||'',name:S.user.name||'',level:S.user.level||'',stage:curStage().id,
+    xp:S.user.xp,streak:S.user.streak,lessons:S.stats.lessons,
+    words:S.words.length,mistakes:S.mistakes.length,progress:{}};
+  PROGRESS_KEYS.forEach(k=>{ out.progress[k]=S[k]; });
+  return JSON.parse(JSON.stringify(out));
+}
+function applyProgress(pl){
+  const pr=(pl&&pl.progress)?pl.progress:null;
+  if(!pr) throw new Error('Буруу өгөгдөл');
+  const keepBank=S.bank, keepApi=S.api, keepSync=S.sync, keepLesson=S.lesson;
+  PROGRESS_KEYS.forEach(k=>{ if(pr[k]!==undefined) S[k]=pr[k]; });
+  S=migrate(S); S.bank=keepBank; S.api=keepApi; S.sync=keepSync; S.lesson=keepLesson;
+  save();
+}
+async function syncPush(manual){
+  const sc=S.sync;
+  if(sc.mode==='off'){ if(manual) toast('Эхлээд синк горимоо сонгоно уу'); return; }
+  const body=JSON.stringify(syncPayload());
+  try{
+    if(sc.mode==='gist'){
+      if(!sc.token){ toast('GitHub token оруулна уу'); return; }
+      const files={'easyenglish_progress.json':{content:body}};
+      const url=sc.gistId?('https://api.github.com/gists/'+sc.gistId):'https://api.github.com/gists';
+      const r=await fetch(url,{method:sc.gistId?'PATCH':'POST',
+        headers:{'Authorization':'Bearer '+sc.token,'Accept':'application/vnd.github+json'},
+        body:JSON.stringify(sc.gistId?{files:files}:{description:'EasyEnglish AI progress',public:false,files:files})});
+      if(!r.ok) throw new Error('GitHub '+r.status);
+      const d=await r.json(); sc.gistId=d.id;
+    }else{
+      if(!sc.url){ toast('Хадгалах хаяг (URL) оруулна уу'); return; }
+      const r=await fetch(sc.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:body});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+    }
+    sc.last=new Date().toISOString(); save(); renderSync();
+    if(manual) toast('Ахиц хадгалагдлаа');
+  }catch(e){ toast('Хадгалж чадсангүй: '+(e.message||e)); }
+}
+async function syncPull(){
+  const sc=S.sync;
+  if(!confirm('Сервер дээрх ахицаар энэ төхөөрөмжийн өгөгдлийг солих уу?')) return;
+  try{
+    let data;
+    if(sc.mode==='gist'){
+      if(!sc.gistId||!sc.token){ toast('Gist ID болон token хэрэгтэй'); return; }
+      const r=await fetch('https://api.github.com/gists/'+sc.gistId,{headers:{'Authorization':'Bearer '+sc.token}});
+      if(!r.ok) throw new Error('GitHub '+r.status);
+      const d=await r.json();
+      const f=d.files['easyenglish_progress.json']; if(!f) throw new Error('Файл олдсонгүй');
+      data=JSON.parse(f.truncated?await (await fetch(f.raw_url)).text():f.content);
+    }else{
+      if(!sc.url){ toast('URL хэрэгтэй'); return; }
+      const r=await fetch(sc.url+(sc.url.indexOf('?')<0?'?':'&')+'code='+encodeURIComponent(sc.code||''),{cache:'no-store'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      data=await r.json();
+    }
+    applyProgress(data); renderHeader(); renderDash(); renderSync();
+    toast('Ахиц татагдлаа');
+  }catch(e){ toast('Татаж чадсангүй: '+(e.message||e)); }
+}
+let syncTimer=null;
+function syncSoon(){
+  if(!S.sync || S.sync.mode==='off' || !S.sync.auto) return;
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(()=>syncPush(false),15000);
+}
+function renderSync(){
+  const box=$('syncBox'); if(!box) return;
+  const sc=S.sync;
+  box.innerHTML=
+    '<div class="field"><label for="syncMode">Хадгалах газар</label><select id="syncMode" onchange="saveSync(true)">'+
+      '<option value="off">Зөвхөн энэ төхөөрөмж (localStorage)</option>'+
+      '<option value="gist">GitHub Gist (хувийн нөөц, олон төхөөрөмж)</option>'+
+      '<option value="url">Сервер хаяг / Google Apps Script (анги нэгдсэн)</option>'+
+    '</select></div>'+
+    (sc.mode==='gist'
+      ? '<div class="field"><label for="syncToken">GitHub token (gist эрхтэй)</label><input id="syncToken" type="password" placeholder="github_pat_..."></div>'+
+        '<div class="field"><label for="syncGist">Gist ID (хоосон бол шинээр үүснэ)</label><input id="syncGist" placeholder="автоматаар бөглөгдөнө"></div>'
+      : sc.mode==='url'
+      ? '<div class="field"><label for="syncUrl">POST хаяг (Apps Script Web App URL)</label><input id="syncUrl" placeholder="https://script.google.com/macros/s/.../exec"></div>'+
+        '<div class="field"><label for="syncCode">Сурагчийн код / ангийн код</label><input id="syncCode" placeholder="9A-12"></div>'
+      : '<p class="muted" style="font-size:13px">Одоогоор ахиц зөвхөн энэ хөтөч дээр хадгалагдаж байна. Хөтчийн санах ой цэвэрлэгдвэл алдагдана.</p>')+
+    (sc.mode!=='off'
+      ? '<label class="row" style="font-weight:600;margin-bottom:12px"><input type="checkbox" id="syncAuto" style="width:auto;margin-right:8px"> Хичээл, шалгалт дуусах бүрт автоматаар хадгалах</label>'+
+        '<div class="row"><button class="btn btn-primary btn-sm" onclick="saveSync()">💾 Тохиргоо хадгалах</button>'+
+        '<button class="btn btn-light btn-sm" onclick="syncPush(true)">⬆️ Одоо илгээх</button>'+
+        '<button class="btn btn-light btn-sm" onclick="syncPull()">⬇️ Серверээс татах</button>'+
+        '<span class="muted" style="font-size:13px">'+(sc.last?('Сүүлд: '+new Date(sc.last).toLocaleString('mn-MN')):'Хараахан илгээгээгүй')+'</span></div>'
+      : '')+
+    '<div class="row" style="margin-top:14px"><button class="btn btn-light btn-sm" onclick="loadRepoPack(false)">🔄 Репогийн pack.json ачаалах</button>'+
+      '<span class="muted" style="font-size:13px">'+(S.sync.packLoaded?('Сүүлд ачаалсан: '+S.sync.packLoaded):'Репогийн пакет ачаалаагүй')+'</span></div>';
+  if(sc.mode==='gist'){ $('syncToken').value=sc.token||''; $('syncGist').value=sc.gistId||''; }
+  if(sc.mode==='url'){ $('syncUrl').value=sc.url||''; $('syncCode').value=sc.code||''; }
+  $('syncMode').value=sc.mode;
+  if($('syncAuto')) $('syncAuto').checked=sc.auto!==false;
+}
+function saveSync(modeOnly){
+  const sc=S.sync;
+  sc.mode=$('syncMode').value;
+  if(!modeOnly){
+    if($('syncToken')) sc.token=$('syncToken').value.trim();
+    if($('syncGist')) sc.gistId=$('syncGist').value.trim();
+    if($('syncUrl')) sc.url=$('syncUrl').value.trim();
+    if($('syncCode')) sc.code=$('syncCode').value.trim();
+    if($('syncAuto')) sc.auto=$('syncAuto').checked;
+  }
+  save(); renderSync();
+  if(!modeOnly) toast('Синк тохиргоо хадгалагдлаа');
+}
+
+/* ============ SETTINGS ============ */
+const KEY_CHIP={ok:['green','✅ ажиллаж байна'],quota:['yellow','⏳ хязгаар дүүрсэн (429)'],err:['red','❌ алдаа'],net:['red','📡 сүлжээ'],'':['gray','— шалгаагүй']};
+function maskKey(k){ return k.length>12 ? k.slice(0,6)+'••••••'+k.slice(-4) : '••••••'; }
+function renderKeys(){
+  const box=$('keyList'), ks=S.api.keys||[];
+  if(!ks.length){ box.innerHTML='<div class="empty" style="padding:18px">Түлхүүр нэмээгүй байна. AI функцууд ажиллахгүй.</div>'; return; }
+  box.innerHTML=ks.map((k,i)=>{
+    const c=KEY_CHIP[k.status||'']||KEY_CHIP[''];
+    const active=(S.api.rotate===false && i===0) || (S.api.rotate!==false && (S.api.idx||0)%Math.max(1,keyList().length)===keyList().indexOf(k));
+    return '<div class="keyrow '+(k.on===false?'off':'')+'">'+
+      '<div style="flex:1;min-width:170px"><b>'+esc(k.name||('Түлхүүр '+(i+1)))+'</b>'+
+        (active&&k.on!==false?' <span class="chip">дараагийн</span>':'')+
+        '<div class="keymask">'+esc(maskKey(k.key))+'</div>'+
+        '<div class="muted" style="font-size:12px;margin-top:3px">Өнөөдөр '+((k.day===today()?k.used:0)||0)+' дуудлага'+(k.err?' · '+esc(k.err):'')+'</div></div>'+
+      '<span class="chip '+c[0]+'">'+c[1]+'</span>'+
+      '<button class="btn btn-light btn-sm" onclick="testKey(\''+k.id+'\')">Шалгах</button>'+
+      '<button class="btn btn-light btn-sm" onclick="toggleKey(\''+k.id+'\')">'+(k.on===false?'Идэвхжүүлэх':'Түр хаах')+'</button>'+
+      '<button class="btn btn-red btn-sm" onclick="delKey(\''+k.id+'\')">Устгах</button></div>';
+  }).join('')+
+  '<p class="muted" style="font-size:13px">Нийт '+ks.length+' түлхүүр · идэвхтэй '+keyList().length+'</p>';
+}
+function addKey(){
+  const key=$('newKey').value.trim(), name=$('newKeyName').value.trim();
+  if(key.length<20){ toast('Түлхүүр буруу байна'); return; }
+  if((S.api.keys||[]).some(k=>k.key===key)){ toast('Энэ түлхүүр аль хэдийн нэмэгдсэн'); return; }
+  S.api.keys.push({id:'k'+Date.now()+Math.random().toString(36).slice(2,5),
+    name:name||('Түлхүүр '+(S.api.keys.length+1)),key:key,on:true,status:'',used:0,day:''});
+  $('newKey').value=''; $('newKeyName').value='';
+  save(); renderKeys(); fillSettings(); toast('Түлхүүр нэмэгдлээ');
+}
+function delKey(id){
+  if(!confirm('Энэ түлхүүрийг устгах уу?')) return;
+  S.api.keys=S.api.keys.filter(k=>k.id!==id); S.api.idx=0; save(); renderKeys(); fillSettings();
+}
+function toggleKey(id){
+  const k=S.api.keys.find(x=>x.id===id); if(!k) return;
+  k.on = k.on===false; save(); renderKeys();
+}
+async function testKey(id){
+  const k=S.api.keys.find(x=>x.id===id); if(!k) return;
+  k.status=''; k.err='шалгаж байна...'; renderKeys();
+  try{
+    await rawGemini(k.key,'Return JSON {"ok":true}',{json:true,system:null,temp:0});
+    k.status='ok'; k.err='';
+  }catch(e){ k.status = e.status===429?'quota':(e.status===0?'net':'err'); k.err=String(e.message).slice(0,90); }
+  save(); renderKeys();
+}
+async function testAllKeys(){
+  if(!(S.api.keys||[]).length){ toast('Түлхүүр алга'); return; }
+  $('keyStatus').innerHTML='<span class="loader"></span>шалгаж байна...';
+  for(const k of S.api.keys) await testKey(k.id);
+  const ok=S.api.keys.filter(k=>k.status==='ok').length;
+  $('keyStatus').textContent=ok+' / '+S.api.keys.length+' түлхүүр ажиллаж байна';
+}
+function testVoice(){ speak('This is how your English voice sounds. Let us practise together.'); }
+function fillVoices(){
+  loadVoices();
+  const sel=$('setVoiceName'); if(!sel) return;
+  sel.innerHTML='<option value="">Автомат (системийн)</option>'+
+    VOICES.map(v=>'<option value="'+esc(v.name)+'">'+esc(v.name+' · '+v.lang)+'</option>').join('');
+  sel.value=S.user.voiceName||'';
+  const m=micMode();
+  $('micInfo').textContent = m==='sr' ? '🎤 Микрофон: хөтчийн таних систем'
+    : m==='rec' ? '🎤 Микрофон: бичлэг → AI таних (iPhone/Safari горим)'
+    : '⚠️ Энэ төхөөрөмж микрофон дэмжихгүй байна';
+}
+function fillSettings(){
+  $('setModel').value=S.api.model;
+  fillVoices(); renderPack(); renderSync();
+  $('setRotate').checked=S.api.rotate!==false;
+  $('setName').value=S.user.name||''; $('setGoal').value=S.user.goal; $('setVoice').value=S.user.rate;
+  $('keyStatus').textContent = hasKey() ? ('✅ '+keyList().length+' идэвхтэй түлхүүр') : '⚠️ Түлхүүр алга';
+  renderKeys();
+}
+function saveSettings(){
+  S.api.model=$('setModel').value;
+  S.api.rotate=$('setRotate').checked;
+  S.user.name=$('setName').value.trim(); S.user.goal=$('setGoal').value; S.user.rate=$('setVoice').value;
+  S.user.voiceName=$('setVoiceName').value;
+  save(); fillSettings(); renderHeader(); toast('Хадгаллаа');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='easyenglish_'+today()+'.json'; a.click();
+}
+function importData(ev){
+  const f=ev.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ S=migrate(JSON.parse(r.result)); save(); location.reload(); }catch(e){ toast('Файл буруу байна'); } };
+  r.readAsText(f);
+}
+function resetAll(){
+  if(!confirm('Бүх ахиц, үг, тохиргоо устана. Итгэлтэй байна уу?')) return;
+  localStorage.removeItem(LS); location.reload();
+}
+
+/* ============ INIT ============ */
+function init(){
+  if(!S.chat.length) S.chat=[{role:'ai',text:"Hi! I'm your English friend. What's your name?"}];
+  renderHeader(); renderDash(); drawChat(); renderPron();
+  if(location.protocol!=='file:') loadRepoPack(true).then(n=>{ if(n) renderDash(); });
+  if(!S.user.name && !S.placement.done){
+    setTimeout(()=>{ if(!hasKey()) go('settings'); },400);
+  }
+  save();
+}
+init();
+
+</script>
+</body>
+</html>
